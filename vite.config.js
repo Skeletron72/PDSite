@@ -6,5 +6,6 @@ export default defineConfig({
   plugins: [
     react(),
   ],
-  base: './', // Essential for GitHub Pages relative paths
+  // Для Netlify лучше использовать стандартный корень '/', если вы не деплоите в подпапку
+  base: '/',
 })
