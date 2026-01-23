@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import { PixelButton, PixelContainer, PixelHeading } from '../components/ui/PixelUI';
 import PixelChart from '../components/PixelChart';
+import BlogEditor from '../components/BlogEditor';
 import Papa from 'papaparse';
 import { useNavigate } from 'react-router-dom';
 
@@ -110,7 +111,8 @@ const AdminDashboard = () => {
                     </PixelContainer>
                 </div>
 
-                <div className="grid grid-cols-1 gap-8">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <BlogEditor />
                     <PixelChart title="POLL RESULTS VISUALIZATION" data={stats.pollData} />
                 </div>
             </div>

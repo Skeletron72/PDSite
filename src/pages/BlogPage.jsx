@@ -1,35 +1,28 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '../lib/supabaseClient';
 
 const BlogPage = () => {
     const navigate = useNavigate();
 
-    const posts = [
-        {
-            id: 1,
-            tag: "Обновление",
-            color: "#55efc4",
-            title: "Свадьбы на утесе и новые костюмы",
-            date: "24 Января, 2026",
-            excerpt: "Теперь вы можете официально закрепить свой союз с другим игроком или NPC. Свадебная церемония дает уникальные бонусы к выносливости."
-        },
-        {
-            id: 2,
-            tag: "Гайд",
-            color: "#81ecec",
-            title: "Как правильно тереть спину другу: Максимизируем баффы",
-            date: "22 Января, 2026",
-            excerpt: "Подробный разбор механики гигиены. Почему мыться вместе эффективнее и как не получить дебафф 'Грязнуля'."
-        },
-        {
-            id: 3,
-            tag: "Мир",
-            color: "#fab1a0",
-            title: "Первая экспедиция: Джунгли Шепота",
-            date: "18 Января, 2026",
-            excerpt: "Обзор новой локации для экспедиций. Какие ресурсы можно найти в джунглях и как не заблудиться в меняющемся лабиринте."
+    const [posts, setPosts] = React.useState([]);
+    const [loading, setLoading] = React.useState(true);
+
+    React.useEffect(() => {
+        fetchPosts();
+    }, []);
+
+    const fetchPosts = async () => {
+        const { data, error } = await supabase
+            .from('posts')
+            .select('*')
+            .order('created_at', { ascending: false });
+
+        if (!error && data) {
+            setPosts(data);
         }
-    ];
+        setLoading(false);
+    };
 
     return (
         <div className="min-h-screen bg-[#fafafa]">
@@ -47,25 +40,41 @@ const BlogPage = () => {
                 <p className="text-gray-400 mb-16 font-bold uppercase tracking-widest text-sm">История нашего мира, шаг за шагом</p>
 
                 <div className="space-y-12">
-                    {posts.map(post => (
-                        <article key={post.id} className="cozy-card group cursor-pointer overflow-hidden flex flex-col md:flex-row gap-8 items-center">
-                            <div className="w-full md:w-48 h-48 bg-gray-100 rounded-[1.5rem] shrink-0 border-4 border-white shadow-inner flex items-center justify-center text-gray-300 font-bold uppercase text-[10px]">
-                                [Картинка поста]
-                            </div>
-                            <div>
-                                <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase text-white mb-4 inline-block" style={{ backgroundColor: post.color }}>
-                                    {post.tag}
-                                </span>
-                                <h2 className="text-2xl font-black mb-4 group-hover:text-primary transition-colors leading-tight">
-                                    {post.title}
-                                </h2>
-                                <p className="text-gray-500 leading-relaxed mb-6 text-sm">
-                                    {post.excerpt}
-                                </p>
-                                <p className="text-[10px] opacity-40 font-bold uppercase">{post.date}</p>
-                            </div>
-                        </article>
-                    ))}
+                    {loading ? (
+                        <p className="text-center text-gray-400 animate-pulse">Checking for signal...</p>
+                    ) : posts.length === 0 ? (
+                        <div className="text-center p-12 border-4 border-dashed border-gray-200 rounded-3xl">
+                            <p className="text-gray-400 font-bold uppercase">No transmissions received yet.</p>
+                        </div>
+                    ) : (
+                        posts.map(post => (
+                            <article key={post.id} className="cozy-card group cursor-pointer overflow-hidden flex flex-col md:flex-row gap-8 items-center">
+                                {post.image_url ? (
+                                    <img src={post.image_url} alt={post.title} className="w-full md:w-48 h-48 object-cover rounded-[1.5rem] shrink-0 border-4 border-white shadow-inner" style={{ imageRendering: 'pixelated' }} />
+                                ) : (
+                                    <div className="w-full md:w-48 h-48 bg-gray-100 rounded-[1.5rem] shrink-0 border-4 border-white shadow-inner flex items-center justify-center text-gray-300 font-bold uppercase text-[10px]">
+                                        [NO SIGNAL]
+                                    </div>
+                                )}
+                                <div className="flex-1">
+                                    <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase text-white mb-4 inline-block" style={{ backgroundColor: '#55efc4' }}>
+                                        {post.tag || 'News'}
+                                    </span>
+                                    <h2 className="text-2xl font-black mb-4 group-hover:text-primary transition-colors leading-tight">
+                                        {post.title}
+                                    </h2>
+                                    <div className="text-gray-500 leading-relaxed mb-6 text-sm line-clamp-3">
+                                        {/* Simple markdown strip for preview, or just show content */}
+                                        {post.content.substring(0, 150)}...
+                                    </div>
+                                    <div className="flex justify-between items-center opacity-40 font-bold uppercase text-[10px]">
+                                        <span>{new Date(post.created_at).toLocaleDateString()}</span>
+                                        {!post.hide_author && <span>Автор: {post.author_name || 'Admin'}</span>}
+                                    </div>
+                                </div>
+                            </article>
+                        ))
+                    )}
                 </div>
             </main>
 

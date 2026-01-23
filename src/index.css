@@ -2,9 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+/* --- Color Variables & Theming --- */
 :root {
-  image-rendering: auto;
-  /* Smoother for high-end feel */
+  image-rendering: pixelated;
+  /* Pixelated for retro feel */
+
+  /* Brand Constants */
   --primary: #55efc4;
   /* Mint Green */
   --secondary: #81ecec;
@@ -13,18 +16,41 @@
   /* Peach/Coral */
   --warning: #ffeaa7;
   /* Soft Yellow */
-  --bg-dark: #2d3436;
-  --text-dark: #2d3436;
-  --text-light: #ffffff;
+
+  /* Light Theme (Default) */
+  --bg-body: #fafafa;
+  --bg-card: #ffffff;
+  --text-main: #2d3436;
+  --text-muted: #636e72;
+  --border-color: #ffffff;
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.5);
 
   font-family: 'Press Start 2P', system-ui, -apple-system, sans-serif;
+}
+
+html.dark {
+  /* Dark Theme Overrides */
+  --bg-body: #1e272e;
+  /* Deep Blue Grey */
+  --bg-card: #2d3436;
+  /* Dark Grey */
+  --text-main: #dfe6e9;
+  /* Off White */
+  --text-muted: #b2bec3;
+  /* Grey */
+  --border-color: #4b6584;
+  /* Muted Blue */
+  --glass-bg: rgba(45, 52, 54, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.1);
 }
 
 body {
   margin: 0;
   overflow-x: hidden;
-  background-color: #fafafa;
-  color: var(--text-dark);
+  background-color: var(--bg-body);
+  color: var(--text-main);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* --- Layout Components --- */
@@ -42,46 +68,152 @@ body {
   justify-content: center;
 }
 
-/* Base class for parallax layers */
-.parallax-layer {
+/* Parallax Containers */
+.parallax-container {
   position: absolute;
   bottom: 0;
   left: 0;
   width: 100%;
-  pointer-events: none;
-  background-repeat: repeat-x;
-  background-position: bottom;
-  image-rendering: pixelated;
-}
-
-.layer-rocks {
-  background-image: url('/assets/parallax_rocks.png');
-  background-size: auto 60%;
   height: 100%;
+  pointer-events: none;
+  transition: transform 0.1s linear;
+  /* Smooth mouse follow */
   z-index: 5;
 }
 
-.layer-jungle {
-  background-image: url('/assets/parallax_jungle.png');
-  background-size: auto 50%;
+/* Inner Layer for CSS Animations (Sway, Pulse) isolated from Mouse Transform */
+.parallax-inner {
+  width: 100%;
   height: 100%;
+  background-position: bottom center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+}
+
+.layer-rocks .parallax-inner {
+  background-image: url('/assets/parallax_rocks.png');
+}
+
+.layer-jungle {
   z-index: 10;
+  /* Aggressive Gap Fix: Move it down and scale it up */
+  bottom: -50px;
+  height: calc(100% + 50px);
+}
+
+.layer-jungle .parallax-inner {
+  background-image: url('/assets/parallax_jungle.png');
+  transform-origin: bottom center;
+  animation: windSway 6s ease-in-out infinite alternate;
+  /* Ensure it covers the bottom even when skewed */
+  height: 110%;
+  /* Extra height to bleed down */
+  background-position: bottom center;
+}
+
+/* Wind Shader Effect: Skew/Rotate slightly only at top (simulated by transform-origin bottom) - Scaled 1.05 to hide bottom gaps */
+@keyframes windSway {
+  0% {
+    transform: scale(1.05) skewX(0deg) rotate(0deg);
+  }
+
+  25% {
+    transform: scale(1.05) skewX(1deg) rotate(0.5deg);
+  }
+
+  75% {
+    transform: scale(1.05) skewX(-0.5deg) rotate(-0.25deg);
+  }
+
+  100% {
+    transform: scale(1.05) skewX(0.5deg) rotate(0.25deg);
+  }
 }
 
 /* Modern Card - "Pinterest Style" */
+/* --- Scroll Animations --- */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-on-scroll {
+  opacity: 0;
+  /* Hidden by default */
+  transform: translateY(40px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.animate-on-scroll.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* --- Jurassic/Retro "Juicy" Buttons --- */
+.btn-shiny {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-shiny::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.6), transparent);
+  transform: skewX(-20deg);
+  animation: shine 3s infinite;
+}
+
+@keyframes shine {
+  0% {
+    left: -100%;
+  }
+
+  20% {
+    left: 200%;
+  }
+
+  100% {
+    left: 200%;
+  }
+}
+
+/* --- Pixelated Decor --- */
+.pixel-corners {
+  clip-path: polygon(0px 10px, 4px 10px, 4px 4px, 10px 4px, 10px 0px,
+      calc(100% - 10px) 0px, calc(100% - 10px) 4px, calc(100% - 4px) 4px, calc(100% - 4px) 10px, 100% 10px,
+      100% calc(100% - 10px), calc(100% - 4px) calc(100% - 10px), calc(100% - 4px) calc(100% - 4px), calc(100% - 10px) calc(100% - 4px), calc(100% - 10px) 100%,
+      10px 100%, 10px calc(100% - 4px), 4px calc(100% - 4px), 4px calc(100% - 10px), 0px calc(100% - 10px));
+}
+
 .cozy-card {
   background: white;
-  border-radius: 2rem;
+  border-radius: 1rem;
+  /* Slightly less rounded to fit pixel theme better if needed, or keep round */
   padding: 2.5rem;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+  box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.1);
+  /* Retro hard shadow */
   border: 4px solid #fff;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  /* Bouncy transition */
   position: relative;
 }
 
 .cozy-card:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.1);
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: 12px 12px 0px rgba(0, 0, 0, 0.15);
+  border-color: var(--primary);
 }
 
 /* Playful Buttons */
@@ -94,54 +226,72 @@ body {
   font-size: 0.8rem;
   text-transform: uppercase;
   letter-spacing: 2px;
-  box-shadow: 0 10px 20px rgba(85, 239, 196, 0.3);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2), 0 4px 0 #00b894;
+  /* Darker shadow + physical depth */
   transition: all 0.2s;
-  border: none;
+  border: 4px solid white;
+  /* added white border for pop */
   cursor: pointer;
 }
 
 .btn-playful:hover {
-  transform: scale(1.05);
-  box-shadow: 0 15px 30px rgba(85, 239, 196, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3), 0 4px 0 #00b894;
 }
 
 .btn-ghost {
-  background: transparent;
+  background: rgba(0, 0, 0, 0.4);
+  /* Dark semi-transparent */
+  backdrop-filter: blur(4px);
+  /* Blur effect */
   border: 4px solid white;
   color: white;
   padding: 1rem 2rem;
   border-radius: 9999px;
-  font-weight: bold;
+  font-weight: 700;
   font-size: 0.7rem;
+  text-transform: uppercase;
+  /* Match other button */
+  letter-spacing: 1px;
   transition: all 0.2s;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
 .btn-ghost:hover {
   background: white;
   color: #2d3436;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
 }
 
 /* Floating Elements */
 @keyframes float {
-
-  0%,
-  100% {
-    transform: translateY(0) rotate(0);
+  0% {
+    transform: translate(0, 0) rotate(0deg);
   }
 
-  50% {
-    transform: translateY(-20px) rotate(5deg);
+  33% {
+    transform: translate(15px, -20px) rotate(8deg);
+  }
+
+  66% {
+    transform: translate(-10px, -35px) rotate(-5deg);
+  }
+
+  100% {
+    transform: translate(0, 0) rotate(0deg);
   }
 }
 
 .floating-leaf {
   position: absolute;
-  width: 40px;
-  height: 40px;
+  width: 8px;
+  height: 8px;
   background: #55efc4;
-  clip-path: ellipse(40% 50% at 50% 50%);
-  opacity: 0.4;
-  animation: float 6s infinite ease-in-out;
+  box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.1);
+  opacity: 0.6;
+  animation: float 8s infinite ease-in-out;
+  pointer-events: none;
+  z-index: 15;
 }
 
 /* News/Blog styles */
@@ -161,4 +311,126 @@ body {
 .section-divider {
   height: 100px;
   background: linear-gradient(180deg, transparent, #fafafa);
+}
+
+/* --- Dynamic Island Navigation --- */
+.dynamic-island-container {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  width: auto;
+  display: flex;
+  justify-content: center;
+}
+
+.dynamic-island {
+  background: rgba(45, 52, 54, 0.8);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+  border-radius: 9999px;
+  padding: 0.75rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  min-width: 300px;
+  /* Initial width */
+  justify-content: space-between;
+}
+
+.dynamic-island:hover {
+  transform: scale(1.02);
+  box-shadow: 0 12px 40px 0 rgba(85, 239, 196, 0.2);
+  /* Green glow on hover */
+  border-color: rgba(85, 239, 196, 0.3);
+}
+
+.dynamic-island.expanded {
+  padding: 1rem 2rem;
+  min-width: 400px;
+}
+
+.nav-link {
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 700;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.3s;
+  cursor: pointer;
+  position: relative;
+}
+
+.nav-link:hover {
+  color: var(--primary);
+  text-shadow: 0 0 8px rgba(85, 239, 196, 0.5);
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: var(--primary);
+  transition: all 0.3s;
+  transform: translateX(-50%);
+}
+
+.nav-link:hover::after {
+  width: 100%;
+}
+
+/* --- Liquid Glass Aesthetics --- */
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.05),
+    0 2px 4px -1px rgba(0, 0, 0, 0.03),
+    inset 0 0 20px rgba(255, 255, 255, 0.1);
+  border-radius: 2rem;
+  transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+/* ... existing glass-panel-dark ... */
+
+/* ... existing firefly/glow css ... */
+
+/* --- Hero Text Fixes --- */
+.hero-text-container {
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+/* Update cozy-card to using Liquid Glass on hover or base */
+.cozy-card {
+  background: var(--bg-card);
+  backdrop-filter: blur(10px);
+  border-radius: 1.5rem;
+  padding: 2.5rem;
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.1);
+  border: 2px solid var(--border-color);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), background-color 0.3s ease;
+  color: var(--text-main);
+}
+
+.cozy-card p {
+  color: var(--text-muted);
+}
+
+.cozy-card:hover {
+  transform: translateY(-10px) scale(1.02);
+  box-shadow:
+    0 20px 40px -5px rgba(85, 239, 196, 0.3),
+    inset 0 0 0 2px rgba(85, 239, 196, 0.5);
+  /* Inner colored border */
+  /* For hover, we might want slightly brighter/different bg depending on theme, or keep transparent */
+  border-color: transparent;
 }
