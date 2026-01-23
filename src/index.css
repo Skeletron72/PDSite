@@ -32,21 +32,40 @@ body {
 /* Lush Hero Container */
 .lush-hero {
   min-height: 100vh;
-  background: linear-gradient(180deg, #a29bfe 0%, #74b9ff 100%);
+  background-image: url('/assets/hero_bg.png');
+  background-size: cover;
+  background-position: center;
   position: relative;
   overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/* Placeholder for Layered Parallax (User to draw) */
+/* Base class for parallax layers */
 .parallax-layer {
   position: absolute;
   bottom: 0;
   left: 0;
   width: 100%;
-  height: 50%;
+  pointer-events: none;
   background-repeat: repeat-x;
   background-position: bottom;
-  pointer-events: none;
+  image-rendering: pixelated;
+}
+
+.layer-rocks {
+  background-image: url('/assets/parallax_rocks.png');
+  background-size: auto 60%;
+  height: 100%;
+  z-index: 5;
+}
+
+.layer-jungle {
+  background-image: url('/assets/parallax_jungle.png');
+  background-size: auto 50%;
+  height: 100%;
+  z-index: 10;
 }
 
 /* Modern Card - "Pinterest Style" */

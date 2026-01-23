@@ -13,7 +13,7 @@ const LandingPage = () => {
                 <div className="floating-leaf" style={{ top: '25%', right: '15%', animationDelay: '1s' }}></div>
                 <div className="floating-leaf" style={{ bottom: '40%', left: '20%', animationDelay: '2s' }}></div>
 
-                <div className="relative z-10 max-w-4xl">
+                <div className="relative z-20 max-w-4xl">
                     <h1 className="text-4xl md:text-7xl font-black mb-6 text-outline tracking-tight uppercase">
                         Pocket Dale
                     </h1>
@@ -31,9 +31,9 @@ const LandingPage = () => {
                     </div>
                 </div>
 
-                {/* Parallax Layers Placeholders */}
-                <div className="parallax-layer opacity-30" style={{ backgroundColor: '#16a085', height: '12%' }}></div>
-                <div className="parallax-layer opacity-50" style={{ backgroundColor: '#2ecc71', height: '6%', marginBottom: '4%' }}></div>
+                {/* Real Parallax Layers */}
+                <div className="parallax-layer layer-rocks animate-float" style={{ animationDuration: '8s' }}></div>
+                <div className="parallax-layer layer-jungle animate-float" style={{ animationDuration: '6s', animationDirection: 'reverse' }}></div>
             </header>
 
             {/* 2. PHILOSOPHY - Вместе лучше */}
