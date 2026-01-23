@@ -6,120 +6,100 @@
 
 :root {
   image-rendering: pixelated;
-  /* Press Start 2P for Latin, system-ui for Cyrillic fallback */
-  font-family: 'Press Start 2P', 'Courier New', Courier, monospace;
-  background-color: #2c211a;
-  /* Darker brown background for the "table" */
-  color: #3b2d1c;
-  /* Dark ink color */
-}
-
-.pixel-paper {
-  background-image: url('/paper_tex.png');
-  background-size: 100% 100%;
-  image-rendering: pixelated;
-  box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.3);
-  padding: 40px;
-  position: relative;
-}
-
-.wood-button {
-  background-image: url('/wood_tex.png');
-  background-size: cover;
-  image-rendering: pixelated;
-  color: #fff !important;
-  border: 4px solid #3b2d1c;
-  padding: 10px 20px;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  text-shadow: 2px 2px 0px #000;
-  transition: transform 0.1s;
-}
-
-.wood-button:hover {
-  transform: translateY(-2px);
-  filter: brightness(1.1);
-}
-
-.wood-button:active {
-  transform: translateY(2px);
-}
-
-.book-container {
-  max-width: 1200px;
-  width: 95vw;
-  margin: 0 auto;
-  display: flex;
-  background-color: #4a3728;
-  padding: 15px;
-  border: 6px solid #1a150f;
-  box-shadow: 0 30px 0 rgba(0, 0, 0, 0.5);
-  transform: perspective(1000px) rotateX(5deg);
-  transition: transform 0.5s ease;
-}
-
-.book-container:hover {
-  transform: perspective(1000px) rotateX(2deg) translateY(-10px);
-}
-
-.book-page {
-  flex: 1;
-  min-height: 85vh;
-  margin: 8px;
-  transition: transform 0.3s ease;
-}
-
-.book-page:hover {
-  z-index: 10;
-}
-
-.book-page::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(to right, rgba(0, 0, 0, 0.05), transparent 5%, transparent 95%, rgba(0, 0, 0, 0.05));
-  pointer-events: none;
-}
-
-@media (max-width: 968px) {
-  .book-container {
-    flex-direction: column;
-    padding: 10px;
-    width: 100%;
-  }
-
-  .book-page {
-    min-height: auto;
-    margin: 10px 0;
-  }
+  /* Better fallback for Cyrillic: Monaco for retro feel, or standard sans-serif */
+  font-family: 'Press Start 2P', 'Monaco', 'Consolas', 'Courier New', monospace;
+  background-color: #0f0f0f;
+  color: #fff;
 }
 
 body {
   margin: 0;
   overflow-x: hidden;
+  background-color: #1a1a1a;
 }
 
 * {
   image-rendering: pixelated !important;
 }
 
-/* Custom Scrollbar in retro style */
-::-webkit-scrollbar {
-  width: 10px;
+/* --- Premium Pixel UI --- */
+
+.hero-bg {
+  background-image: url('/hero_bg.png');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
 }
 
-::-webkit-scrollbar-track {
-  background: #212529;
+.pixel-panel {
+  background-image: url('/ui_panel.png');
+  background-size: 100% 100%;
+  padding: 3rem;
+  border: 4px solid #3b2d1c;
+  box-shadow: 10px 10px 0px rgba(0, 0, 0, 0.5);
+  image-rendering: pixelated;
 }
 
-::-webkit-scrollbar-thumb {
-  background: #fff;
-  border: 2px solid #212529;
+.pixel-btn-wood {
+  background-image: url('/wood_tex.png');
+  /* reusing the previous texture as it was actually good, just needed better context */
+  background-size: cover;
+  border: 4px solid #1a150f;
+  color: #fff;
+  padding: 0.75rem 1.5rem;
+  text-shadow: 2px 2px 0px #000;
+  box-shadow: 0 6px 0 #1a150f;
+  transition: all 0.1s;
+  cursor: pointer;
+  display: inline-block;
+  text-align: center;
+}
+
+.pixel-btn-wood:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 0 #1a150f;
+}
+
+.pixel-btn-wood:active {
+  transform: translateY(4px);
+  box-shadow: 0 2px 0 #1a150f;
+}
+
+.pixel-card {
+  background: #2a221b;
+  border: 4px solid #3b2d1c;
+  box-shadow: 6px 6px 0px #1a150f;
+  padding: 1.5rem;
+  transition: transform 0.2s;
+}
+
+.pixel-card:hover {
+  transform: scale(1.05);
+}
+
+.glass-dark {
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Animations */
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
 }
 
 canvas {
