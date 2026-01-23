@@ -1,157 +1,152 @@
 import React from 'react';
-import { PixelHeading } from '../components/ui/PixelUI';
 import { useNavigate } from 'react-router-dom';
 
 const LandingPage = () => {
     const navigate = useNavigate();
 
-    const features = [
-        {
-            title: "Создавай",
-            desc: "Интуитивный крафт из сотен ресурсов.",
-            icon: "nes-icon diamond is-medium"
-        },
-        {
-            title: "Выживай",
-            desc: "Опасные ночи и динамическая погода.",
-            icon: "nes-icon ghost is-medium"
-        },
-        {
-            title: "Дружи",
-            desc: "Торгуй и строй вместе с другими.",
-            icon: "nes-icon star is-medium"
-        },
-        {
-            title: "Исследуй",
-            desc: "Бесконечные острова и древние тайны.",
-            icon: "nes-icon map is-medium"
-        }
-    ];
-
     return (
-        <div className="min-h-screen bg-[#1a1a1a] text-white selection:bg-warning selection:text-black">
-            {/* Navbar */}
-            <nav className="fixed top-0 w-full z-50 glass-dark py-4 px-6">
-                <div className="max-w-7xl mx-auto flex justify-between items-center">
-                    <div className="flex items-center gap-3">
-                        {/* Asset Placeholder: Favicon/Logo (32x32) */}
-                        <div className="w-8 h-8 bg-warning border-2 border-black flex items-center justify-center text-black text-[10px] font-bold">PD</div>
-                        <span className="text-xl font-bold tracking-tighter text-warning">POCKETDALE</span>
-                    </div>
-                    <div className="hidden md:flex gap-8 text-[10px] uppercase font-bold">
-                        <a href="#lore" className="hover:text-primary transition-colors">История</a>
-                        <a href="#features" className="hover:text-primary transition-colors">Особенности</a>
-                        <a href="https://t.me/your_telegram" target="_blank" className="hover:text-[#0088cc] transition-colors">Telegram</a>
-                    </div>
-                    <button
-                        className="pixel-btn-wood text-[10px] scale-90"
-                        onClick={() => navigate('/auth')}
-                    >
-                        ВХОД
-                    </button>
-                </div>
-            </nav>
+        <div className="min-h-screen">
+            {/* 1. HERO SECTION - Tropical & Magical */}
+            <header className="lush-hero flex flex-col items-center justify-center pt-24 px-6 text-center text-white">
+                {/* Decorative Assets Placeholders */}
+                <div className="floating-leaf" style={{ top: '15%', left: '10%', animationDelay: '0s' }}></div>
+                <div className="floating-leaf" style={{ top: '25%', right: '15%', animationDelay: '1s' }}></div>
+                <div className="floating-leaf" style={{ bottom: '40%', left: '20%', animationDelay: '2s' }}></div>
 
-            {/* Hero Section */}
-            <section className="hero-bg relative min-h-screen flex items-center justify-center pt-20 px-4">
-                {/* Placeholder for Hero Image (Full Screen 1920x1080) */}
-                <div className="absolute inset-0 bg-black/40 z-0 flex items-center justify-center text-white/10 text-4xl font-bold uppercase pointer-events-none">
-                    [ФОНОВОЕ ИЗОБРАЖЕНИЕ 1920x1080]
-                </div>
+                <div className="relative z-10 max-w-4xl">
+                    <h1 className="text-4xl md:text-7xl font-black mb-6 text-outline tracking-tight uppercase">
+                        Pocket Dale
+                    </h1>
+                    <p className="text-lg md:text-2xl mb-12 font-bold bg-white/20 backdrop-blur-md inline-block px-6 py-2 rounded-full shadow-lg">
+                        🏝 Когда выживание — это забота
+                    </p>
 
-                <div className="relative z-10 max-w-4xl w-full text-center">
-                    <div className="animate-float mb-8">
-                        <PixelHeading className="text-5xl md:text-8xl text-warning drop-shadow-[8px_8px_0px_rgba(0,0,0,1)]">
-                            PocketDale
-                        </PixelHeading>
-                    </div>
-
-                    <div className="pixel-panel mx-auto max-w-2xl">
-                        <p className="text-lg md:text-2xl mb-8 leading-relaxed font-bold">
-                            Выживай. Строй. Исследуй.
-                        </p>
-                        <p className="text-sm md:text-base mb-10 leading-loose">
-                            Уютная многопользовательская песочница прямо в твоем браузере.
-                            Очнись на берегу, собери первую кирку и построй свой новый дом.
-                            Никаких скачиваний — только приключения.
-                        </p>
-                        <button
-                            className="pixel-btn-wood text-lg px-12 py-4 w-full md:w-auto"
-                            onClick={() => navigate('/auth')}
-                        >
-                            ИГРАТЬ СЕЙЧАС
+                    <div className="flex flex-col md:flex-row gap-6 justify-center">
+                        <button className="btn-playful" onClick={() => navigate('/auth')}>
+                            Начать Приключение
+                        </button>
+                        <button className="btn-ghost">
+                            Смотреть Трейлер
                         </button>
                     </div>
                 </div>
-            </section>
 
-            {/* Lore Section */}
-            <section id="lore" className="py-24 px-4 bg-[#2c211a] border-y-8 border-[#1a150f]">
-                <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center gap-12">
-                    <div className="flex-1">
-                        <PixelHeading level={2} className="text-3xl mb-8 text-primary uppercase">
-                            Шторм забрал всё...
-                        </PixelHeading>
-                        <p className="text-lg italic leading-loose opacity-90 border-l-4 border-primary pl-6">
-                            "Ваша шхуна разбилась в щепки о скалы таинственного острова. Океан выбросил тебя на берег с пустыми руками.
-                            Вокруг — дикая природа, древние руины и другие выжившие. Сможешь ли ты покорить эти земли?"
-                        </p>
-                    </div>
-                    <div className="flex-1 flex justify-center">
-                        {/* Asset Placeholder: Gameplay Screenshot (800x600) */}
-                        <div className="pixel-card w-full h-64 bg-[#3b2d1c] flex items-center justify-center text-[10px] text-center p-4">
-                            СКРИНШОТ ГЕЙМПЛЕЯ<br />(PLACEHOLDER: assets/gameplay.png)
-                        </div>
-                    </div>
-                </div>
-            </section>
+                {/* Parallax Layers - User to replace with illustrations */}
+                <div className="parallax-layer opacity-40" style={{ backgroundColor: '#27ae60', height: '10%' }}></div>
+                <div className="parallax-layer opacity-60" style={{ backgroundColor: '#2ecc71', height: '5%', marginBottom: '5%' }}></div>
+            </header>
 
-            {/* Features Grid */}
-            <section id="features" className="py-24 px-4 bg-[#1a150f]">
+            {/* 2. PHILOSOPHY - Symbiosis */}
+            <section className="py-24 px-6 bg-white overflow-hidden" id="about">
                 <div className="max-w-6xl mx-auto">
-                    <div className="text-center mb-16">
-                        <PixelHeading level={2} className="text-4xl mb-4 text-warning uppercase">Особенности мира</PixelHeading>
-                        <div className="w-24 h-2 bg-warning mx-auto"></div>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                        {features.map((f, i) => (
-                            <div key={i} className="pixel-card flex flex-col items-center text-center gap-6 group">
-                                <div className="bg-black/40 p-6 border-2 border-primary/30 group-hover:border-primary transition-colors">
-                                    <i className={f.icon}></i>
-                                </div>
-                                <h3 className="text-xl text-primary font-bold uppercase">{f.title}</h3>
-                                <p className="text-xs leading-relaxed opacity-70 italic">{f.desc}</p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-20 items-center">
+                        <div className="relative">
+                            {/* Asset Placeholder: Character Hug Illustration (500x500) */}
+                            <div className="w-full aspect-square bg-[#fab1a0]/10 rounded-full flex items-center justify-center border-4 border-dashed border-[#fab1a0]">
+                                <p className="text-[#fab1a0] font-bold text-center p-8 uppercase">
+                                    Иллюстрация: <br /> Симбиоз и объятия
+                                </p>
                             </div>
-                        ))}
+                        </div>
+                        <div>
+                            <h2 className="text-3xl md:text-5xl font-black mb-8 text-[#2d3436]">
+                                🫂 Ты мне нужен...
+                            </h2>
+                            <p className="text-lg leading-relaxed text-[#636e72] mb-10">
+                                В большинстве игр вы просто бегаете рядом. В Pocket Dale вы <b>зависите</b> друг от друга.
+                                Одиночество пугает — экран темнеет, а руки персонажа начинают дрожать.
+                                Лекарство? Просто обнимите друга.
+                            </p>
+                            <div className=" news-item">
+                                <p className="font-bold">✨ Забота лечит</p>
+                                <p className="text-sm">Полей друга из лейки, потри ему спину — и вы оба получите заряд бодрости на весь день!</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>
 
-            {/* Footer */}
-            <footer className="py-16 px-6 bg-black border-t-8 border-[#3b2d1c]">
-                <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-12">
-                    <div className="text-center md:text-left">
-                        <PixelHeading className="text-2xl mb-4 text-warning">PocketDale</PixelHeading>
-                        <p className="text-xs opacity-50 mb-6 max-w-xs">
-                            Присоединяйся к нашему сообществу в Telegram, чтобы найти друзей для выживания и следить за обновлениями.
+            {/* 3. FEATURES - Pinterest Grid */}
+            <section className="py-24 px-6 bg-[#f1f2f6]">
+                <div className="max-w-7xl mx-auto text-center mb-16">
+                    <h2 className="text-3xl md:text-5xl font-black mb-4">Жизнь в кармане</h2>
+                    <p className="text-gray-500 font-bold uppercase tracking-widest text-sm">Ваши возможности на архипелаге</p>
+                </div>
+
+                <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div className="cozy-card">
+                        <div className="w-16 h-16 bg-[#55efc4] rounded-2xl mb-8 flex items-center justify-center text-white text-2xl">🚽</div>
+                        <h3 className="text-xl font-bold mb-4">Физиология</h3>
+                        <p className="text-sm text-gray-600 leading-loose">
+                            Чистота открывает двери. Грязнулю не пустят в магазин! Следите за собой, чтобы не попасть в "конфуз".
                         </p>
-                        <div className="flex items-center justify-center md:justify-start gap-4">
-                            <i className="nes-icon whatsapp scale-75 !text-[#0088cc]"></i>
-                            <a href="https://t.me/pockerdale_tg" target="_blank" className="text-sm font-bold text-[#0088cc] hover:underline">
-                                @POCKETDALE_TG
-                            </a>
+                    </div>
+                    <div className="cozy-card">
+                        <div className="w-16 h-16 bg-[#a29bfe] rounded-2xl mb-8 flex items-center justify-center text-white text-2xl">💍</div>
+                        <h3 className="text-xl font-bold mb-4">Романтика</h3>
+                        <p className="text-sm text-gray-600 leading-loose">
+                            Влюбились? Подарите "Кольцо Обещания" и получите боевые баффы от силы вашей любви.
+                        </p>
+                    </div>
+                    <div className="cozy-card">
+                        <div className="w-16 h-16 bg-[#fab1a0] rounded-2xl mb-8 flex items-center justify-center text-white text-2xl">🚣</div>
+                        <h3 className="text-xl font-bold mb-4">Экспедиции</h3>
+                        <p className="text-sm text-gray-600 leading-loose">
+                            Каждый раз карта меняется. Садитесь в лодку и плывите в неизведанное за редкими ресурсами.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            {/* 4. NEWS & BLOG - The "Pinterest" Feed */}
+            <section className="py-24 px-6 bg-white" id="blog">
+                <div className="max-w-6xl mx-auto">
+                    <div className="flex justify-between items-end mb-16">
+                        <div>
+                            <h2 className="text-3xl md:text-5xl font-black mb-4">Вести с Архипелага</h2>
+                            <p className="text-gray-400 font-bold uppercase tracking-widest text-xs">Последние обновления и гайды</p>
                         </div>
+                        <button className="text-primary font-bold hover:underline">Все новости →</button>
                     </div>
 
-                    <div className="flex flex-col items-center md:items-end gap-6">
-                        <button className="pixel-btn-wood px-8 py-3" onClick={() => navigate('/auth')}>
-                            НАЧАТЬ ПУТЬ
-                        </button>
-                        <p className="text-[10px] opacity-30">
-                            © 2026. Сделано с любовью к пикселям.
-                        </p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div className="flex gap-6 items-start p-6 hover:bg-gray-50 rounded-[2rem] transition-colors cursor-pointer">
+                            <div className="w-32 h-32 bg-gray-200 rounded-3xl shrink-0"></div>
+                            <div>
+                                <span className="text-[10px] text-primary font-bold uppercase">Обновление</span>
+                                <h4 className="font-bold my-2">Свадьбы на утесе и новые костюмы</h4>
+                                <p className="text-xs text-gray-500">Добавлена возможность играть свадьбы с NPC и друзьями...</p>
+                                <p className="text-[10px] mt-4 opacity-40">24 Января, 2026</p>
+                            </div>
+                        </div>
+                        <div className="flex gap-6 items-start p-6 hover:bg-gray-50 rounded-[2rem] transition-colors cursor-pointer">
+                            <div className="w-32 h-32 bg-gray-200 rounded-3xl shrink-0"></div>
+                            <div>
+                                <span className="text-[10px] text-secondary font-bold uppercase">Гайд</span>
+                                <h4 className="font-bold my-2">Как правильно тереть спину другу</h4>
+                                <p className="text-xs text-gray-500">Максимизируем заряд бодрости на весь день с помощью лейки...</p>
+                                <p className="text-[10px] mt-4 opacity-40">22 Января, 2026</p>
+                            </div>
+                        </div>
                     </div>
+                </div>
+            </section>
+
+            {/* 5. FOOTER */}
+            <footer className="py-20 bg-[#2d3436] text-white">
+                <div className="max-w-7xl mx-auto px-6 text-center">
+                    <h3 className="text-3xl font-black mb-8">Присоединяйся к нам</h3>
+                    <div className="flex justify-center gap-6 mb-12">
+                        <button className="bg-[#0088cc] px-8 py-3 rounded-full font-bold hover:scale-105 transition-transform">
+                            Telegram
+                        </button>
+                        <button className="bg-[#5865F2] px-8 py-3 rounded-full font-bold hover:scale-105 transition-transform">
+                            Discord
+                        </button>
+                    </div>
+                    <p className="text-sm opacity-40 max-w-md mx-auto">
+                        © 2026 POCKET DALE. Уютный мир в вашем браузере. Сделано с любовью к симбиозу.
+                    </p>
                 </div>
             </footer>
         </div>
