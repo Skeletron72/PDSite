@@ -4,6 +4,7 @@ import LandingPage from './pages/LandingPage';
 import AuthPage from './pages/AuthPage';
 import PollsPage from './pages/PollsPage';
 import AdminDashboard from './pages/AdminDashboard';
+import BlogPage from './pages/BlogPage';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
           <Route path="/auth" element={<AuthPage />} />
           <Route path="/polls" element={<PollsPage />} />
           <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/blog" element={<BlogPage />} />
         </Routes>
       </div>
     </Router>
