@@ -58,7 +58,7 @@ body {
 /* Lush Hero Container */
 .lush-hero {
   min-height: 100vh;
-  background-image: url('/assets/hero_bg.png');
+  background-image: url('./assets/hero_bg.png');
   background-size: cover;
   background-position: center;
   position: relative;
@@ -92,7 +92,7 @@ body {
 }
 
 .layer-rocks .parallax-inner {
-  background-image: url('/assets/parallax_rocks.png');
+  background-image: url('./assets/parallax_rocks.png');
 }
 
 .layer-jungle {
@@ -103,7 +103,7 @@ body {
 }
 
 .layer-jungle .parallax-inner {
-  background-image: url('/assets/parallax_jungle.png');
+  background-image: url('./assets/parallax_jungle.png');
   transform-origin: bottom center;
   animation: windSway 6s ease-in-out infinite alternate;
   /* Ensure it covers the bottom even when skewed */
@@ -486,7 +486,7 @@ body {
   padding: 2rem;
   border-radius: 2rem;
   border: 2px solid var(--border-color);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   position: relative;
 }
@@ -512,7 +512,7 @@ body {
 
 .roadmap-card:hover {
   transform: translateY(-5px) scale(1.02) !important;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
   border-color: var(--primary);
 }
 
@@ -545,19 +545,23 @@ body {
   .roadmap-timeline {
     left: 20px;
   }
+
   .roadmap-dot {
     left: 20px;
     transform: none;
   }
+
   .roadmap-item:hover .roadmap-dot {
     transform: scale(1.5);
   }
+
   .roadmap-card {
     width: calc(100% - 60px);
     margin-left: 60px !important;
     text-align: left !important;
     transform: translateX(20px) !important;
   }
+
   .roadmap-item.is-visible .roadmap-card {
     transform: translateX(0) !important;
   }

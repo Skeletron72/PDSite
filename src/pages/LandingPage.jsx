@@ -5,6 +5,8 @@ import { Sparkles, Palmtree, Home, Heart, Compass as Ship, Leaf } from 'lucide-r
 import { supabase } from '../lib/supabaseClient';
 import ThemeToggle from '../components/ThemeToggle';
 import CookieConsent from '../components/CookieConsent';
+import logoPixel from '../assets/logo_pixel.png';
+import illustrationGarden from '../assets/illustration_garden.png';
 
 const LandingPage = () => {
     const navigate = useNavigate();
@@ -60,7 +62,7 @@ const LandingPage = () => {
             <div className="dynamic-island-container">
                 <nav className="dynamic-island">
                     <div className="flex items-center gap-3 cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-                        <img src="/assets/logo_pixel.png" alt="PD" className="h-8 w-auto image-pixelated hover:rotate-12 transition-transform" />
+                        <img src={logoPixel} alt="PD" className="h-8 w-auto image-pixelated hover:rotate-12 transition-transform" />
                     </div>
 
                     <div className="flex items-center gap-6">
@@ -92,7 +94,7 @@ const LandingPage = () => {
                     opacity: scrolled ? 0 : 1
                 }}>
                     {/* Logo with Magic Glow */}
-                    <img src="/assets/logo_pixel.png" alt="Pocket Dale" className="w-full max-w-2xl mx-auto mb-8 image-pixelated magic-glow animate-float" style={{ animationDuration: '6s' }} />
+                    <img src={logoPixel} alt="Pocket Dale" className="w-full max-w-2xl mx-auto mb-8 image-pixelated magic-glow animate-float" style={{ animationDuration: '6s' }} />
 
                     {/* Liquid Glass Pill for Tagline */}
                     <div className="glass-panel-dark px-8 py-4 mb-12 flex items-center gap-3 transform hover:scale-105 transition-transform cursor-default">
@@ -138,7 +140,7 @@ const LandingPage = () => {
                             {/* Asset Placeholder: Illustration */}
                             <div className="relative group">
                                 <div className="absolute inset-0 bg-[#fab1a0] rounded-[3rem] rotate-3 opacity-20 group-hover:rotate-6 transition-transform duration-500"></div>
-                                <img src="/assets/illustration_garden.png" alt="Cozy Gardening" className="relative z-10 w-full rounded-[3rem] border-4 border-white shadow-xl image-pixelated transform group-hover:scale-[1.02] transition-transform duration-500" />
+                                <img src={illustrationGarden} alt="Cozy Gardening" className="relative z-10 w-full rounded-[3rem] border-4 border-white shadow-xl image-pixelated transform group-hover:scale-[1.02] transition-transform duration-500" />
                             </div>
                         </div>
                         <div>
