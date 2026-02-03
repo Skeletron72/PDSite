@@ -6,6 +6,6 @@ export default defineConfig({
   plugins: [
     react(),
   ],
-  // Для Netlify лучше использовать стандартный корень '/', если вы не деплоите в подпапку
-  base: '/',
+  // Для GitHub Pages используем имя репозитория. Для Netlify можно оставить '/'
+  base: '/PDSite/',
 })
