@@ -37,17 +37,9 @@ const ProfilePage = () => {
                 .select('*')
                 .eq('id', session.user.id)
                 .single();
-            
+
             if (profileData) {
                 setProfile(profileData);
-            } else {
-                // If profile doesn't exist, create it (fallback if no trigger)
-                const { data: newProfile } = await supabase
-                    .from('profiles')
-                    .insert([{ id: session.user.id, nickname: session.user.email.split('@')[0] }])
-                    .select()
-                    .single();
-                setProfile(newProfile);
             }
 
             // Fetch Islands
@@ -56,7 +48,7 @@ const ProfilePage = () => {
                 .select('*')
                 .eq('user_id', session.user.id)
                 .order('slot_index', { ascending: true });
-            
+
             if (islandsData) {
                 setIslands(islandsData);
             }
@@ -108,11 +100,11 @@ const ProfilePage = () => {
 
             setPromoStatus('success');
             setPromoMessage('Промокод успешно активирован! Награда добавлена.');
-            setHistory(prev => [{ 
-                id: Date.now(), 
-                action: `Активация кода ${promoCode.toUpperCase()}`, 
-                date: new Date().toISOString().split('T')[0], 
-                icon: 'Gift' 
+            setHistory(prev => [{
+                id: Date.now(),
+                action: `Активация кода ${promoCode.toUpperCase()}`,
+                date: new Date().toISOString().split('T')[0],
+                icon: 'Gift'
             }, ...prev]);
             setPromoCode('');
 

@@ -1,15 +1,56 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import { useNavigate } from 'react-router-dom';
-import { Key } from 'lucide-react';
+import { Key, CheckCircle, XCircle, Loader2 } from 'lucide-react';
 
 const AuthPage = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [nickname, setNickname] = useState('');
+    const [accessKey, setAccessKey] = useState('');
     const [loading, setLoading] = useState(false);
     const [isRegister, setIsRegister] = useState(false);
     const [message, setMessage] = useState('');
+    const [nicknameError, setNicknameError] = useState('');
+    const [isNicknameAvailable, setIsNicknameAvailable] = useState(null); // null, true, false
+    const [isCheckingNickname, setIsCheckingNickname] = useState(false);
     const navigate = useNavigate();
+
+    // Debounce nickname check
+    useEffect(() => {
+        if (!isRegister || !nickname.trim() || nickname.length < 3) {
+            setIsNicknameAvailable(null);
+            setNicknameError('');
+            return;
+        }
+
+        const timer = setTimeout(async () => {
+            setIsCheckingNickname(true);
+            try {
+                const { data, error } = await supabase
+                    .from('profiles')
+                    .select('nickname')
+                    .eq('nickname', nickname.trim())
+                    .maybeSingle();
+
+                if (error) throw error;
+
+                if (data) {
+                    setIsNicknameAvailable(false);
+                    setNicknameError('Имя уже занято');
+                } else {
+                    setIsNicknameAvailable(true);
+                    setNicknameError('');
+                }
+            } catch (err) {
+                console.error('Error checking nickname:', err);
+            } finally {
+                setIsCheckingNickname(false);
+            }
+        }, 500);
+
+        return () => clearTimeout(timer);
+    }, [nickname, isRegister]);
 
     const handleAuth = async (e) => {
         e.preventDefault();
@@ -18,24 +59,33 @@ const AuthPage = () => {
 
         try {
             if (isRegister) {
-                const { data: authData, error } = await supabase.auth.signUp({ email, password });
-                if (error) throw error;
-
-                // Manually create profile if signup was successful
-                if (authData?.user) {
-                    const { error: profileError } = await supabase
-                        .from('profiles')
-                        .insert([
-                            {
-                                id: authData.user.id,
-                                nickname: email.split('@')[0],
-                                avatar_id: 0
-                            }
-                        ]);
-                    if (profileError) console.error('Error creating profile:', profileError);
+                if (!nickname || !accessKey) {
+                    throw new Error('Имя игрока и ключ доступа обязательны');
                 }
 
-                setMessage('Успешно! Проверьте почту для подтверждения или войдите.');
+                const { data: authData, error } = await supabase.auth.signUp({
+                    email,
+                    password,
+                    options: {
+                        data: {
+                            nickname: nickname.trim(),
+                            access_key: accessKey.trim()
+                        }
+                    }
+                });
+
+                if (error) {
+                    // Specific error handling based on backend rules
+                    if (error.message.includes('access_key')) {
+                        throw new Error('Неверный или уже использованный ключ доступа.');
+                    }
+                    if (error.message.includes('profiles_nickname_key') || error.message.includes('unique constraint')) {
+                        throw new Error('Это имя игрока уже занято.');
+                    }
+                    throw error;
+                }
+
+                setMessage('Успешно! Проверьте почту для подтверждения (если требуется) или войдите в игру!');
             } else {
                 const { error } = await supabase.auth.signInWithPassword({ email, password });
                 if (error) throw error;
@@ -87,6 +137,50 @@ const AuthPage = () => {
                                 required
                             />
                         </div>
+
+                        {isRegister && (
+                            <>
+                                <div className="space-y-2">
+                                    <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-2">Имя игрока (Nickname)</label>
+                                    <div className="relative">
+                                        <input
+                                            type="text"
+                                            value={nickname}
+                                            onChange={(e) => {
+                                                setNickname(e.target.value);
+                                                setNicknameError('');
+                                                setIsNicknameAvailable(null);
+                                            }}
+                                            placeholder="SuperPlayer777"
+                                            className={`w-full bg-[#f1f2f6] border-4 ${isNicknameAvailable === true ? 'border-[#55efc4]' : isNicknameAvailable === false ? 'border-[#ff7675]' : 'border-transparent'} focus:border-[#55efc4] rounded-xl px-4 py-4 font-bold text-gray-700 outline-none transition-all placeholder-gray-300 pr-12`}
+                                            required
+                                        />
+                                        <div className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400">
+                                            {isCheckingNickname ? (
+                                                <Loader2 className="w-5 h-5 animate-spin" />
+                                            ) : isNicknameAvailable === true ? (
+                                                <CheckCircle className="w-5 h-5 text-[#55efc4]" />
+                                            ) : isNicknameAvailable === false ? (
+                                                <XCircle className="w-5 h-5 text-[#ff7675]" />
+                                            ) : null}
+                                        </div>
+                                    </div>
+                                    {nicknameError && <p className="text-[10px] text-[#ff7675] font-bold ml-2 uppercase">{nicknameError}</p>}
+                                </div>
+
+                                <div className="space-y-2">
+                                    <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-2">Ключ доступа (Access Key)</label>
+                                    <input
+                                        type="text"
+                                        value={accessKey}
+                                        onChange={(e) => setAccessKey(e.target.value)}
+                                        placeholder="XXXX-XXXX-XXXX"
+                                        className="w-full bg-[#f1f2f6] border-4 border-transparent focus:border-[#55efc4] rounded-xl px-4 py-4 font-bold text-gray-700 outline-none transition-all placeholder-gray-300"
+                                        required
+                                    />
+                                </div>
+                            </>
+                        )}
 
                         <div className="space-y-2">
                             <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-2">Пароль</label>
