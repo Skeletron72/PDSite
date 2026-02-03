@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
 import { useAuth } from '../contexts/AuthContext';
 import { Heart, MessageCircle, Share2, Eye } from 'lucide-react';
@@ -27,7 +28,7 @@ const BlogPage = () => {
     };
 
     return (
-        <div className="min-h-screen bg-[#fafafa]">
+        <div className="min-h-screen bg-[var(--bg-body)] text-[var(--text-main)] transition-colors duration-300">
             {/* The global Navbar is already present in App.jsx layout */}
 
             <main className="max-w-4xl mx-auto py-20 px-6">

@@ -38,7 +38,7 @@ const PollsPage = () => {
     };
 
     return (
-        <div className="min-h-screen p-8 bg-[#212529]">
+        <div className="min-h-screen p-8 bg-[var(--bg-body)] text-[var(--text-main)] transition-colors duration-300">
             <div className="max-w-4xl mx-auto">
                 <div className="flex justify-between items-center mb-12">
                     <PixelHeading level={1} className="text-2xl text-primary">COMMUNITY POLLS</PixelHeading>

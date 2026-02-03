@@ -141,7 +141,7 @@ const AuthPage = () => {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center p-6 bg-[#2d3436] relative overflow-hidden">
+        <div className="min-h-screen flex items-center justify-center p-6 bg-[var(--bg-body)] text-[var(--text-main)] relative overflow-hidden transition-colors duration-300">
             {/* Background Decor */}
             <div className="fixed inset-0 pointer-events-none opacity-20"
                 style={{
@@ -161,7 +161,7 @@ const AuthPage = () => {
                 </div>
 
                 {/* Main Card */}
-                <div className="bg-white rounded-[2rem] p-8 md:p-10 shadow-[8px_8px_0px_rgba(0,0,0,0.2)] border-4 border-white relative">
+                <div className="bg-[var(--bg-card)] rounded-[2rem] p-8 md:p-10 shadow-[8px_8px_0px_rgba(0,0,0,0.2)] border-4 border-[var(--bg-card)] relative">
                     {/* Decorative Elements */}
                     <div className="absolute -top-6 -right-6 w-16 h-16 bg-[#fab1a0] rounded-full flex items-center justify-center text-3xl shadow-lg border-4 border-white animate-bounce-slow text-white">
                         <Key className="w-8 h-8" />
@@ -177,7 +177,7 @@ const AuthPage = () => {
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
                                         placeholder="hero@pocketdale.com"
-                                        className="w-full bg-[#f1f2f6] border-4 border-transparent focus:border-[#55efc4] rounded-xl px-4 py-4 font-bold text-gray-700 outline-none transition-all placeholder-gray-300 shadow-inner"
+                                        className="w-full bg-[var(--bg-body)] border-4 border-transparent focus:border-[#55efc4] rounded-xl px-4 py-4 font-bold text-[var(--text-main)] outline-none transition-all placeholder-gray-300 shadow-inner"
                                         required
                                     />
                                 </div>
@@ -196,7 +196,7 @@ const AuthPage = () => {
                                                         setIsNicknameAvailable(null);
                                                     }}
                                                     placeholder="SuperPlayer777"
-                                                    className={`w-full bg-[#f1f2f6] border-4 ${isNicknameAvailable === true ? 'border-[#55efc4]' : isNicknameAvailable === false ? 'border-[#ff7675]' : 'border-transparent'} focus:border-[#55efc4] rounded-xl px-4 py-4 font-bold text-gray-700 outline-none transition-all placeholder-gray-300 pr-12 shadow-inner`}
+                                                    className={`w-full bg-[var(--bg-body)] border-4 ${isNicknameAvailable === true ? 'border-[#55efc4]' : isNicknameAvailable === false ? 'border-[#ff7675]' : 'border-transparent'} focus:border-[#55efc4] rounded-xl px-4 py-4 font-bold text-[var(--text-main)] outline-none transition-all placeholder-gray-300 pr-12 shadow-inner`}
                                                     required
                                                 />
                                                 <div className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400">
@@ -219,7 +219,7 @@ const AuthPage = () => {
                                                 value={accessKey}
                                                 onChange={(e) => setAccessKey(e.target.value)}
                                                 placeholder="XXXX-XXXX-XXXX"
-                                                className="w-full bg-[#f1f2f6] border-4 border-transparent focus:border-[#55efc4] rounded-xl px-4 py-4 font-bold text-gray-700 outline-none transition-all placeholder-gray-300 shadow-inner"
+                                                className="w-full bg-[var(--bg-body)] border-4 border-transparent focus:border-[#55efc4] rounded-xl px-4 py-4 font-bold text-[var(--text-main)] outline-none transition-all placeholder-gray-300 shadow-inner"
                                                 required
                                             />
                                         </div>
@@ -234,7 +234,7 @@ const AuthPage = () => {
                                             value={password}
                                             onChange={(e) => setPassword(e.target.value)}
                                             placeholder="••••••••"
-                                            className="w-full bg-[#f1f2f6] border-4 border-transparent focus:border-[#55efc4] rounded-xl px-4 py-4 font-bold text-gray-700 outline-none transition-all placeholder-gray-300 shadow-inner"
+                                            className="w-full bg-[var(--bg-body)] border-4 border-transparent focus:border-[#55efc4] rounded-xl px-4 py-4 font-bold text-[var(--text-main)] outline-none transition-all placeholder-gray-300 shadow-inner"
                                             required
                                         />
                                     </div>
@@ -287,7 +287,7 @@ const AuthPage = () => {
                                             value={confirmPassword}
                                             onChange={(e) => setConfirmPassword(e.target.value)}
                                             placeholder="••••••••"
-                                            className={`w-full bg-[#f1f2f6] border-4 ${confirmPassword && password !== confirmPassword ? 'border-[#ff7675]' : 'border-transparent'} focus:border-[#55efc4] rounded-xl px-4 py-4 font-bold text-gray-700 outline-none transition-all placeholder-gray-300 shadow-inner`}
+                                            className={`w-full bg-[var(--bg-body)] border-4 ${confirmPassword && password !== confirmPassword ? 'border-[#ff7675]' : 'border-transparent'} focus:border-[#55efc4] rounded-xl px-4 py-4 font-bold text-[var(--text-main)] outline-none transition-all placeholder-gray-300 shadow-inner`}
                                             required
                                         />
                                     </div>
@@ -313,7 +313,7 @@ const AuthPage = () => {
                         </button>
                     </form>
 
-                    <div className="mt-8 pt-8 border-t-2 border-gray-100 text-center">
+                    <div className="mt-8 pt-8 border-t-2 border-[var(--border-color)] text-center">
                         <button
                             type="button"
                             className="text-gray-400 font-bold text-xs uppercase hover:text-[#55efc4] transition-colors"

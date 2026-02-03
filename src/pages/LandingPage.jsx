@@ -108,7 +108,7 @@ const LandingPage = () => {
             </header>
 
             {/* 2. PHILOSOPHY - Вместе лучше */}
-            <section className="py-24 px-6 bg-white overflow-hidden animate-on-scroll" id="about">
+            <section className="py-24 px-6 bg-[var(--bg-body)] text-[var(--text-main)] overflow-hidden animate-on-scroll transition-colors duration-300" id="about">
                 <div className="max-w-6xl mx-auto">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-20 items-center">
                         <div className="relative">
@@ -119,10 +119,10 @@ const LandingPage = () => {
                             </div>
                         </div>
                         <div>
-                            <h2 className="text-3xl md:text-6xl font-black mb-8 text-[#2d3436] tracking-tighter uppercase">
+                            <h2 className="text-3xl md:text-6xl font-black mb-8 text-[var(--text-main)] tracking-tighter uppercase">
                                 Вместе — лучше
                             </h2>
-                            <p className="text-lg leading-relaxed text-[#636e72] mb-12">
+                            <p className="text-lg leading-relaxed text-[var(--text-muted)] mb-12">
                                 В мире Pocket Dale вы не просто выживаете — вы живете. Это игра о том, как превратить заброшенный берег в общий дом.
                                 Исследуйте архипелаг, делитесь ресурсами и поддерживайте друг друга в путешествиях.
                                 Здесь одиночество отступает, уступая место командному духу.
@@ -145,7 +145,7 @@ const LandingPage = () => {
             </section>
 
             {/* 3. FEATURES */}
-            <section className="py-24 px-6 bg-[#f7f9fb] animate-on-scroll">
+            <section className="py-24 px-6 bg-[var(--bg-body)] text-[var(--text-main)] animate-on-scroll transition-colors duration-300">
                 <div className="max-w-7xl mx-auto text-center mb-20">
                     <h2 className="text-3xl md:text-5xl font-black mb-4 uppercase tracking-tighter">Жизнь на Архипелаге</h2>
                     <div className="w-32 h-2 bg-primary mx-auto rounded-full"></div>
@@ -159,7 +159,7 @@ const LandingPage = () => {
                             </div>
                         </div>
                         <h3 className="text-2xl font-black mb-4">Уют и Дом</h3>
-                        <p className="text-sm text-gray-600 leading-loose">
+                        <p className="text-sm text-[var(--text-muted)] leading-loose">
                             Превратите дикий остров в райский уголок. Стройте, украшайте и следите за комфортом своего персонажа —
                             счастливый герой лучше справляется с трудностями.
                         </p>
@@ -171,7 +171,7 @@ const LandingPage = () => {
                             </div>
                         </div>
                         <h3 className="text-2xl font-black mb-4">Отношения</h3>
-                        <p className="text-sm text-gray-600 leading-loose">
+                        <p className="text-sm text-[var(--text-muted)] leading-loose">
                             Заводите друзей среди жителей острова или найдите любовь среди других игроков.
                             Крепкие узы и «Кольцо Обещания» дадут вам особые силы в совместных приключениях.
                         </p>
@@ -183,7 +183,7 @@ const LandingPage = () => {
                             </div>
                         </div>
                         <h3 className="text-2xl font-black mb-4">Бесконечный Мир</h3>
-                        <p className="text-sm text-gray-600 leading-loose">
+                        <p className="text-sm text-[var(--text-muted)] leading-loose">
                             Ваш домашний остров — это тихая гавань. Но стоит сесть в лодку, и вас ждет постоянно меняющийся архипелаг
                             с древними руинами, сокровищами и тайнами.
                         </p>
@@ -191,12 +191,12 @@ const LandingPage = () => {
                 </div>
             </section>
             {/* 4. ROADMAP */}
-            <section className="py-24 px-6 bg-white roadmap-section overflow-hidden">
+            <section className="py-24 px-6 bg-[var(--bg-body)] text-[var(--text-main)] roadmap-section overflow-hidden transition-colors duration-300">
                 <div className="roadmap-timeline"></div>
 
                 <div className="max-w-6xl mx-auto mb-20 text-center relative z-10 animate-on-scroll">
                     <h2 className="text-3xl md:text-5xl font-black mb-4 uppercase tracking-tighter">Путь Развития</h2>
-                    <p className="text-gray-500 font-bold max-w-2xl mx-auto">Мы постоянно работаем над улучшением Pocket Dale. Вот наши планы на ближайшее будущее.</p>
+                    <p className="text-[var(--text-muted)] font-bold max-w-2xl mx-auto">Мы постоянно работаем над улучшением Pocket Dale. Вот наши планы на ближайшее будущее.</p>
                 </div>
 
                 <div className="max-w-6xl mx-auto relative z-10">

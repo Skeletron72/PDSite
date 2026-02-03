@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
 import { useAuth } from '../contexts/AuthContext';
 import { User, Gift, Clock, LogOut, Check, X, Shield, Sparkles, Wand2 } from 'lucide-react';
@@ -136,16 +137,16 @@ const ProfilePage = () => {
     };
 
     if (loading) return (
-        <div className="min-h-screen flex items-center justify-center bg-[#f7f9fb] text-[#2d3436] font-bold">
+        <div className="min-h-screen flex items-center justify-center bg-[var(--bg-body)] text-[var(--text-main)] font-bold">
             Загрузка профиля...
         </div>
     );
 
     return (
-        <div className="min-h-screen bg-[#f7f9fb] pt-20 pb-12 px-6">
+        <div className="min-h-screen bg-[var(--bg-body)] pt-20 pb-12 px-6 text-[var(--text-main)]">
             <div className="max-w-5xl mx-auto">
                 {/* Header */}
-                <div className="flex flex-col md:flex-row items-center justify-between mb-12 gap-6 p-8 bg-white rounded-[2.5rem] shadow-sm border-2 border-gray-100">
+                <div className="flex flex-col md:flex-row items-center justify-between mb-12 gap-6 p-8 bg-[var(--bg-card)] rounded-[2.5rem] shadow-sm border-2 border-[var(--border-color)]">
                     <div className="flex items-center gap-6">
                         <div className="w-24 h-24 bg-[#a29bfe] rounded-full flex items-center justify-center border-4 border-white shadow-md">
                             <span className="text-4xl font-black text-white">{profile?.nickname?.[0].toUpperCase() || user?.email?.[0].toUpperCase()}</span>
@@ -170,7 +171,7 @@ const ProfilePage = () => {
                                 </form>
                             ) : (
                                 <div className="flex items-center gap-2 group mb-1">
-                                    <h1 className="text-3xl font-black text-[#2d3436]">{profile?.nickname || 'Герой'}</h1>
+                                    <h1 className="text-3xl font-black text-[var(--text-main)]">{profile?.nickname || 'Герой'}</h1>
                                     <button
                                         onClick={() => {
                                             setNewNickname(profile?.nickname || '');
@@ -210,21 +211,21 @@ const ProfilePage = () => {
                     <div className="md:col-span-3 space-y-4">
                         <button
                             onClick={() => setActiveTab('profile')}
-                            className={`w-full text-left px-6 py-4 rounded-2xl font-bold transition-all flex items-center gap-3 ${activeTab === 'profile' ? 'bg-white shadow-sm text-[#6c5ce7]' : 'text-gray-400 hover:bg-gray-100'}`}
+                            className={`w-full text-left px-6 py-4 rounded-2xl font-bold transition-all flex items-center gap-3 ${activeTab === 'profile' ? 'bg-[var(--bg-card)] shadow-sm text-[#6c5ce7]' : 'text-gray-400 hover:bg-[var(--bg-card)]/50'}`}
                         >
                             <User className="w-5 h-5" />
                             Основное
                         </button>
                         <button
                             onClick={() => setActiveTab('promo')}
-                            className={`w-full text-left px-6 py-4 rounded-2xl font-bold transition-all flex items-center gap-3 ${activeTab === 'promo' ? 'bg-white shadow-sm text-[#fdcb6e]' : 'text-gray-400 hover:bg-gray-100'}`}
+                            className={`w-full text-left px-6 py-4 rounded-2xl font-bold transition-all flex items-center gap-3 ${activeTab === 'promo' ? 'bg-[var(--bg-card)] shadow-sm text-[#fdcb6e]' : 'text-gray-400 hover:bg-[var(--bg-card)]/50'}`}
                         >
                             <Gift className="w-5 h-5" />
                             Промокоды
                         </button>
                         <button
                             onClick={() => setActiveTab('history')}
-                            className={`w-full text-left px-6 py-4 rounded-2xl font-bold transition-all flex items-center gap-3 ${activeTab === 'history' ? 'bg-white shadow-sm text-[#00cec9]' : 'text-gray-400 hover:bg-gray-100'}`}
+                            className={`w-full text-left px-6 py-4 rounded-2xl font-bold transition-all flex items-center gap-3 ${activeTab === 'history' ? 'bg-[var(--bg-card)] shadow-sm text-[#00cec9]' : 'text-gray-400 hover:bg-[var(--bg-card)]/50'}`}
                         >
                             <Clock className="w-5 h-5" />
                             История
@@ -271,17 +272,17 @@ const ProfilePage = () => {
                     {/* Content Area */}
                     <div className="md:col-span-9">
                         {activeTab === 'profile' && (
-                            <div className="bg-white rounded-[2.5rem] p-8 shadow-sm border-2 border-gray-100 min-h-[400px]">
-                                <h2 className="text-2xl font-black text-[#2d3436] mb-6">Ваши Острова</h2>
+                            <div className="bg-[var(--bg-card)] rounded-[2.5rem] p-8 shadow-sm border-2 border-[var(--border-color)] min-h-[400px]">
+                                <h2 className="text-2xl font-black text-[var(--text-main)] mb-6">Ваши Острова</h2>
                                 <p className="text-gray-500 mb-8">Управление игровыми слотами и прогрессом персонажа.</p>
 
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     {islands.length > 0 ? (
                                         islands.map((island) => (
-                                            <div key={island.id} className="p-6 bg-[#f7f9fb] rounded-2xl border-2 border-gray-100 hover:border-[#6c5ce7] transition-all group">
+                                            <div key={island.id} className="p-6 bg-[var(--bg-body)] rounded-2xl border-2 border-[var(--border-color)] hover:border-[#6c5ce7] transition-all group">
                                                 <div className="flex justify-between items-start mb-4">
                                                     <div>
-                                                        <h3 className="font-black text-[#2d3436] text-lg">{island.name}</h3>
+                                                        <h3 className="font-black text-[var(--text-main)] text-lg">{island.name}</h3>
                                                         <p className="text-xs font-bold text-gray-400">Слот #{island.slot_index + 1}</p>
                                                     </div>
                                                     <span className="bg-[#6c5ce7] text-white text-[10px] font-black px-2 py-1 rounded-md">ДЕНЬ {island.current_day}</span>
@@ -289,16 +290,16 @@ const ProfilePage = () => {
                                                 <div className="space-y-2">
                                                     <div className="flex justify-between text-xs font-bold">
                                                         <span className="text-gray-400">СИД:</span>
-                                                        <span className="text-[#2d3436]">{island.seed}</span>
+                                                        <span className="text-[var(--text-main)]">{island.seed}</span>
                                                     </div>
                                                 </div>
-                                                <button className="w-full mt-4 py-2 bg-white border-2 border-[#6c5ce7] text-[#6c5ce7] rounded-xl font-bold text-sm hover:bg-[#6c5ce7] hover:text-white transition-all">
+                                                <button className="w-full mt-4 py-2 bg-[var(--bg-card)] border-2 border-[#6c5ce7] text-[#6c5ce7] rounded-xl font-bold text-sm hover:bg-[#6c5ce7] hover:text-white transition-all">
                                                     Управлять
                                                 </button>
                                             </div>
                                         ))
                                     ) : (
-                                        <div className="col-span-full p-12 bg-[#f7f9fb] rounded-2xl border-2 border-dashed border-gray-200 text-center">
+                                        <div className="col-span-full p-12 bg-[var(--bg-body)] rounded-2xl border-2 border-dashed border-[var(--border-color)] text-center">
                                             <p className="text-gray-400 font-bold mb-2">У вас пока нет созданных островов.</p>
                                             <p className="text-xs text-gray-300 uppercase tracking-widest font-black">Зайдите в игру, чтобы начать приключение!</p>
                                         </div>
@@ -308,8 +309,8 @@ const ProfilePage = () => {
                         )}
 
                         {activeTab === 'promo' && (
-                            <div className="bg-white rounded-[2.5rem] p-8 shadow-sm border-2 border-gray-100 min-h-[400px]">
-                                <h2 className="text-2xl font-black text-[#2d3436] mb-6">Активация кодов</h2>
+                            <div className="bg-[var(--bg-card)] rounded-[2.5rem] p-8 shadow-sm border-2 border-[var(--border-color)] min-h-[400px]">
+                                <h2 className="text-2xl font-black text-[var(--text-main)] mb-6">Активация кодов</h2>
                                 <p className="text-gray-500 mb-8">Введите промокод, чтобы получить уникальные предметы и бонусы в игре.</p>
 
                                 <form onSubmit={handleActivatePromo} className="max-w-md">
@@ -319,7 +320,7 @@ const ProfilePage = () => {
                                             value={promoCode}
                                             onChange={(e) => setPromoCode(e.target.value)}
                                             placeholder="Введите код (например, POCKET2025)"
-                                            className="w-full bg-[#f7f9fb] border-2 border-[#dfe6e9] focus:border-[#fdcb6e] rounded-xl px-5 py-4 font-bold text-[#2d3436] outline-none transition-all uppercase placeholder-gray-300"
+                                            className="w-full bg-[var(--bg-body)] border-2 border-[var(--border-color)] focus:border-[#fdcb6e] rounded-xl px-5 py-4 font-bold text-[var(--text-main)] outline-none transition-all uppercase placeholder-gray-300"
                                         />
                                         <button
                                             type="submit"
@@ -340,19 +341,19 @@ const ProfilePage = () => {
                         )}
 
                         {activeTab === 'history' && (
-                            <div className="bg-white rounded-[2.5rem] p-8 shadow-sm border-2 border-gray-100 min-h-[400px]">
-                                <h2 className="text-2xl font-black text-[#2d3436] mb-6">История активности</h2>
+                            <div className="bg-[var(--bg-card)] rounded-[2.5rem] p-8 shadow-sm border-2 border-[var(--border-color)] min-h-[400px]">
+                                <h2 className="text-2xl font-black text-[var(--text-main)] mb-6">История активности</h2>
 
                                 <div className="space-y-4">
                                     {history.map((item) => (
-                                        <div key={item.id} className="flex items-center justify-between p-4 bg-[#f7f9fb] rounded-2xl hover:bg-gray-100 transition-colors">
+                                        <div key={item.id} className="flex items-center justify-between p-4 bg-[var(--bg-body)] rounded-2xl hover:bg-[var(--bg-card)]/30 transition-colors">
                                             <div className="flex items-center gap-4">
-                                                <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm text-gray-400">
+                                                <div className="w-10 h-10 bg-[var(--bg-card)] rounded-full flex items-center justify-center shadow-sm text-gray-400">
                                                     {item.icon === 'User' ? <User className="w-5 h-5" /> : <Gift className="w-5 h-5" />}
                                                 </div>
-                                                <span className="font-bold text-[#2d3436]">{item.action}</span>
+                                                <span className="font-bold text-[var(--text-main)]">{item.action}</span>
                                             </div>
-                                            <span className="text-xs font-bold text-gray-400 bg-white px-3 py-1 rounded-full">{item.date}</span>
+                                            <span className="text-xs font-bold text-gray-400 bg-[var(--bg-card)] px-3 py-1 rounded-full">{item.date}</span>
                                         </div>
                                     ))}
                                 </div>
