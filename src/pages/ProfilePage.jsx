@@ -6,6 +6,8 @@ import { User, Gift, Clock, LogOut, Check, X, Shield } from 'lucide-react';
 const ProfilePage = () => {
     const navigate = useNavigate();
     const [user, setUser] = useState(null);
+    const [profile, setProfile] = useState(null);
+    const [islands, setIslands] = useState([]);
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState('profile');
 
@@ -21,16 +23,47 @@ const ProfilePage = () => {
     ]);
 
     useEffect(() => {
-        const getUser = async () => {
+        const fetchData = async () => {
             const { data: { session } } = await supabase.auth.getSession();
             if (!session) {
                 navigate('/auth');
                 return;
             }
             setUser(session.user);
+
+            // Fetch Profile
+            const { data: profileData } = await supabase
+                .from('profiles')
+                .select('*')
+                .eq('id', session.user.id)
+                .single();
+            
+            if (profileData) {
+                setProfile(profileData);
+            } else {
+                // If profile doesn't exist, create it (fallback if no trigger)
+                const { data: newProfile } = await supabase
+                    .from('profiles')
+                    .insert([{ id: session.user.id, nickname: session.user.email.split('@')[0] }])
+                    .select()
+                    .single();
+                setProfile(newProfile);
+            }
+
+            // Fetch Islands
+            const { data: islandsData } = await supabase
+                .from('islands')
+                .select('*')
+                .eq('user_id', session.user.id)
+                .order('slot_index', { ascending: true });
+            
+            if (islandsData) {
+                setIslands(islandsData);
+            }
+
             setLoading(false);
         };
-        getUser();
+        fetchData();
     }, [navigate]);
 
     const handleLogout = async () => {
@@ -38,17 +71,54 @@ const ProfilePage = () => {
         navigate('/');
     };
 
-    const handleActivatePromo = (e) => {
+    const handleActivatePromo = async (e) => {
         e.preventDefault();
-        // Mock Promo Logic
-        if (promoCode.trim().toUpperCase() === 'POCKET2025') {
+        setPromoStatus(null);
+        setPromoMessage('');
+
+        if (!promoCode.trim()) return;
+
+        try {
+            // Check Access Keys
+            const { data, error } = await supabase
+                .from('access_keys')
+                .select('*')
+                .eq('key_code', promoCode.trim())
+                .single();
+
+            if (error || !data) {
+                setPromoStatus('error');
+                setPromoMessage('Неверный или истекший промокод.');
+                return;
+            }
+
+            if (data.is_used) {
+                setPromoStatus('error');
+                setPromoMessage('Этот код уже был использован.');
+                return;
+            }
+
+            // Mark as used
+            const { error: updateError } = await supabase
+                .from('access_keys')
+                .update({ is_used: true, used_by_user_id: user.id })
+                .eq('key_code', promoCode.trim());
+
+            if (updateError) throw updateError;
+
             setPromoStatus('success');
             setPromoMessage('Промокод успешно активирован! Награда добавлена.');
-            setHistory(prev => [{ id: Date.now(), action: `Активация кода ${promoCode.toUpperCase()}`, date: new Date().toISOString().split('T')[0], icon: 'Gift' }, ...prev]);
+            setHistory(prev => [{ 
+                id: Date.now(), 
+                action: `Активация кода ${promoCode.toUpperCase()}`, 
+                date: new Date().toISOString().split('T')[0], 
+                icon: 'Gift' 
+            }, ...prev]);
             setPromoCode('');
-        } else {
+
+        } catch (err) {
             setPromoStatus('error');
-            setPromoMessage('Неверный или истекший промокод.');
+            setPromoMessage(`Ошибка: ${err.message}`);
         }
     };
 
@@ -65,10 +135,10 @@ const ProfilePage = () => {
                 <div className="flex flex-col md:flex-row items-center justify-between mb-12 gap-6 p-8 bg-white rounded-[2.5rem] shadow-sm border-2 border-gray-100">
                     <div className="flex items-center gap-6">
                         <div className="w-24 h-24 bg-[#a29bfe] rounded-full flex items-center justify-center border-4 border-white shadow-md">
-                            <span className="text-4xl font-black text-white">{user?.email?.[0].toUpperCase()}</span>
+                            <span className="text-4xl font-black text-white">{profile?.nickname?.[0].toUpperCase() || user?.email?.[0].toUpperCase()}</span>
                         </div>
                         <div>
-                            <h1 className="text-3xl font-black text-[#2d3436] mb-1">Мой Профиль</h1>
+                            <h1 className="text-3xl font-black text-[#2d3436] mb-1">{profile?.nickname || 'Герой'}</h1>
                             <p className="text-gray-500 font-medium">{user?.email}</p>
                             <div className="flex gap-2 mt-3">
                                 <span className="text-xs font-bold px-3 py-1 bg-[#55efc4]/20 text-[#00b894] rounded-full uppercase tracking-wider">
@@ -121,11 +191,37 @@ const ProfilePage = () => {
                     <div className="md:col-span-9">
                         {activeTab === 'profile' && (
                             <div className="bg-white rounded-[2.5rem] p-8 shadow-sm border-2 border-gray-100 min-h-[400px]">
-                                <h2 className="text-2xl font-black text-[#2d3436] mb-6">Настройки аккаунта</h2>
-                                <p className="text-gray-500 mb-8">Здесь вы можете управлять своими данными. К сожалению, изменение пароля пока доступно только через поддержку.</p>
+                                <h2 className="text-2xl font-black text-[#2d3436] mb-6">Ваши Острова</h2>
+                                <p className="text-gray-500 mb-8">Управление игровыми слотами и прогрессом персонажа.</p>
 
-                                <div className="p-6 bg-[#f7f9fb] rounded-2xl border-2 border-dashed border-gray-200 text-center">
-                                    <p className="text-gray-400 font-bold">Статистика персонажа скоро появится...</p>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    {islands.length > 0 ? (
+                                        islands.map((island) => (
+                                            <div key={island.id} className="p-6 bg-[#f7f9fb] rounded-2xl border-2 border-gray-100 hover:border-[#6c5ce7] transition-all group">
+                                                <div className="flex justify-between items-start mb-4">
+                                                    <div>
+                                                        <h3 className="font-black text-[#2d3436] text-lg">{island.name}</h3>
+                                                        <p className="text-xs font-bold text-gray-400">Слот #{island.slot_index + 1}</p>
+                                                    </div>
+                                                    <span className="bg-[#6c5ce7] text-white text-[10px] font-black px-2 py-1 rounded-md">ДЕНЬ {island.current_day}</span>
+                                                </div>
+                                                <div className="space-y-2">
+                                                    <div className="flex justify-between text-xs font-bold">
+                                                        <span className="text-gray-400">СИД:</span>
+                                                        <span className="text-[#2d3436]">{island.seed}</span>
+                                                    </div>
+                                                </div>
+                                                <button className="w-full mt-4 py-2 bg-white border-2 border-[#6c5ce7] text-[#6c5ce7] rounded-xl font-bold text-sm hover:bg-[#6c5ce7] hover:text-white transition-all">
+                                                    Управлять
+                                                </button>
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <div className="col-span-full p-12 bg-[#f7f9fb] rounded-2xl border-2 border-dashed border-gray-200 text-center">
+                                            <p className="text-gray-400 font-bold mb-2">У вас пока нет созданных островов.</p>
+                                            <p className="text-xs text-gray-300 uppercase tracking-widest font-black">Зайдите в игру, чтобы начать приключение!</p>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         )}

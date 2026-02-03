@@ -18,9 +18,24 @@ const AuthPage = () => {
 
         try {
             if (isRegister) {
-                const { error } = await supabase.auth.signUp({ email, password });
+                const { data: authData, error } = await supabase.auth.signUp({ email, password });
                 if (error) throw error;
-                setMessage('Успешно! Проверьте почту для подтверждения.');
+
+                // Manually create profile if signup was successful
+                if (authData?.user) {
+                    const { error: profileError } = await supabase
+                        .from('profiles')
+                        .insert([
+                            {
+                                id: authData.user.id,
+                                nickname: email.split('@')[0],
+                                avatar_id: 0
+                            }
+                        ]);
+                    if (profileError) console.error('Error creating profile:', profileError);
+                }
+
+                setMessage('Успешно! Проверьте почту для подтверждения или войдите.');
             } else {
                 const { error } = await supabase.auth.signInWithPassword({ email, password });
                 if (error) throw error;

@@ -213,6 +213,69 @@ const LandingPage = () => {
                     </div>
                 </div>
             </section>
+            {/* 4. ROADMAP */}
+            <section className="py-24 px-6 bg-white roadmap-section overflow-hidden">
+                <div className="roadmap-timeline"></div>
+
+                <div className="max-w-6xl mx-auto mb-20 text-center relative z-10 animate-on-scroll">
+                    <h2 className="text-3xl md:text-5xl font-black mb-4 uppercase tracking-tighter">Путь Развития</h2>
+                    <p className="text-gray-500 font-bold max-w-2xl mx-auto">Мы постоянно работаем над улучшением Pocket Dale. Вот наши планы на ближайшее будущее.</p>
+                </div>
+
+                <div className="max-w-6xl mx-auto relative z-10">
+                    {[
+                        {
+                            title: "Альфа-тест",
+                            date: "Q1 2025",
+                            status: "done",
+                            statusText: "Завершено",
+                            desc: "Запуск основного игрового движка, базовые механики строительства и садоводства. Первые игроки на архипелаге."
+                        },
+                        {
+                            title: "Социальное обновление",
+                            date: "Q2 2025",
+                            status: "progress",
+                            statusText: "В разработке",
+                            desc: "Система друзей, совместное строительство, обмен ресурсами и внутриигровой чат."
+                        },
+                        {
+                            title: "Новые биомы и квесты",
+                            date: "Q3 2025",
+                            status: "planned",
+                            statusText: "Запланировано",
+                            desc: "Расширение архипелага: пустынные острова, заснеженные вершины и цепочки уникальных заданий."
+                        },
+                        {
+                            title: "Мобильная версия",
+                            date: "Q4 2025",
+                            status: "planned",
+                            statusText: "Запланировано",
+                            desc: "Выход Pocket Dale на iOS и Android. Кроссплатформенный прогресс между всеми устройствами."
+                        },
+                        {
+                            title: "Глобальный релиз",
+                            date: "2026",
+                            status: "planned",
+                            statusText: "Запланировано",
+                            desc: "Полномасштабный запуск игры, открытие глобальных серверов и первый сезонный ивент."
+                        }
+                    ].map((step, idx) => (
+                        <div key={idx} className="roadmap-item animate-on-scroll">
+                            <div className="roadmap-dot"></div>
+                            <div className="roadmap-card group">
+                                <div className={`roadmap-status status-${step.status}`}>
+                                    {step.statusText}
+                                </div>
+                                <h3 className="text-2xl font-black mb-1">{step.title}</h3>
+                                <p className="text-sm font-bold text-primary mb-4">{step.date}</p>
+                                <p className="text-sm text-gray-400 leading-relaxed font-medium">
+                                    {step.desc}
+                                </p>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </section>
 
 
 
