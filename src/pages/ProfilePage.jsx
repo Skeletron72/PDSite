@@ -1,15 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
-import { User, Gift, Clock, LogOut, Check, X, Shield } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
+import { User, Gift, Clock, LogOut, Check, X, Shield, Sparkles, Wand2 } from 'lucide-react';
 
 const ProfilePage = () => {
     const navigate = useNavigate();
-    const [user, setUser] = useState(null);
-    const [profile, setProfile] = useState(null);
+    const { user, profile, signOut } = useAuth();
     const [islands, setIslands] = useState([]);
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState('profile');
+
+    // Nickname Edit State
+    const [isEditingNickname, setIsEditingNickname] = useState(false);
+    const [newNickname, setNewNickname] = useState('');
+    const [updateLoading, setUpdateLoading] = useState(false);
 
     // Promo Code State
     const [promoCode, setPromoCode] = useState('');
@@ -23,43 +27,32 @@ const ProfilePage = () => {
     ]);
 
     useEffect(() => {
-        const fetchData = async () => {
-            const { data: { session } } = await supabase.auth.getSession();
-            if (!session) {
-                navigate('/auth');
-                return;
-            }
-            setUser(session.user);
+        const fetchIslands = async () => {
+            if (!user) return;
 
-            // Fetch Profile
-            const { data: profileData } = await supabase
-                .from('profiles')
-                .select('*')
-                .eq('id', session.user.id)
-                .single();
-
-            if (profileData) {
-                setProfile(profileData);
-            }
-
-            // Fetch Islands
-            const { data: islandsData } = await supabase
+            const { data } = await supabase
                 .from('islands')
                 .select('*')
-                .eq('user_id', session.user.id)
+                .eq('user_id', user.id)
                 .order('slot_index', { ascending: true });
 
-            if (islandsData) {
-                setIslands(islandsData);
-            }
-
+            if (data) setIslands(data);
             setLoading(false);
         };
-        fetchData();
-    }, [navigate]);
+
+        if (user) {
+            fetchIslands();
+        } else {
+            // Wait for auth loading or redirect
+            const timeout = setTimeout(() => {
+                if (!loading && !user) navigate('/auth');
+            }, 1000);
+            return () => clearTimeout(timeout);
+        }
+    }, [user, navigate]);
 
     const handleLogout = async () => {
-        await supabase.auth.signOut();
+        await signOut();
         navigate('/');
     };
 
@@ -114,6 +107,34 @@ const ProfilePage = () => {
         }
     };
 
+    const handleUpdateNickname = async (e) => {
+        e.preventDefault();
+        if (!newNickname.trim() || newNickname === profile?.nickname) {
+            setIsEditingNickname(false);
+            return;
+        }
+
+        setUpdateLoading(true);
+        try {
+            const { error } = await supabase
+                .from('profiles')
+                .update({ nickname: newNickname.trim() })
+                .eq('id', user.id);
+
+            if (error) throw error;
+
+            // Refresh local state or use refreshProfile from context if available
+            // For now, simple reload or state update is enough if we trust Supabase
+            // But let's use the context refresh if we implemented it
+            window.location.reload(); // Quickest way to ensure everything updates for now
+        } catch (err) {
+            alert(`Ошибка обновления: ${err.message}`);
+        } finally {
+            setUpdateLoading(false);
+            setIsEditingNickname(false);
+        }
+    };
+
     if (loading) return (
         <div className="min-h-screen flex items-center justify-center bg-[#f7f9fb] text-[#2d3436] font-bold">
             Загрузка профиля...
@@ -130,7 +151,38 @@ const ProfilePage = () => {
                             <span className="text-4xl font-black text-white">{profile?.nickname?.[0].toUpperCase() || user?.email?.[0].toUpperCase()}</span>
                         </div>
                         <div>
-                            <h1 className="text-3xl font-black text-[#2d3436] mb-1">{profile?.nickname || 'Герой'}</h1>
+                            {isEditingNickname ? (
+                                <form onSubmit={handleUpdateNickname} className="flex gap-2 mb-1">
+                                    <input
+                                        type="text"
+                                        value={newNickname}
+                                        onChange={(e) => setNewNickname(e.target.value)}
+                                        className="bg-gray-50 border-2 border-[#6c5ce7] rounded-lg px-3 py-1 font-bold text-[#2d3436] outline-none"
+                                        autoFocus
+                                        placeholder="Новый ник"
+                                    />
+                                    <button type="submit" disabled={updateLoading} className="bg-[#6c5ce7] text-white px-3 py-1 rounded-lg font-bold text-xs uppercase hover:bg-[#5849c4]">
+                                        {updateLoading ? '...' : 'Ок'}
+                                    </button>
+                                    <button type="button" onClick={() => setIsEditingNickname(false)} className="text-gray-400 font-bold text-xs uppercase hover:text-gray-600">
+                                        Отмена
+                                    </button>
+                                </form>
+                            ) : (
+                                <div className="flex items-center gap-2 group mb-1">
+                                    <h1 className="text-3xl font-black text-[#2d3436]">{profile?.nickname || 'Герой'}</h1>
+                                    <button
+                                        onClick={() => {
+                                            setNewNickname(profile?.nickname || '');
+                                            setIsEditingNickname(true);
+                                        }}
+                                        className="opacity-0 group-hover:opacity-100 p-1 text-[#6c5ce7] hover:bg-[#6c5ce7]/10 rounded-md transition-all"
+                                        title="Изменить имя"
+                                    >
+                                        <Shield className="w-4 h-4 rotate-45" /> {/* Using Shield as a placeholder for edit or a generic icon */}
+                                    </button>
+                                </div>
+                            )}
                             <p className="text-gray-500 font-medium">{user?.email}</p>
                             <div className="flex gap-2 mt-3">
                                 <span className="text-xs font-bold px-3 py-1 bg-[#55efc4]/20 text-[#00b894] rounded-full uppercase tracking-wider">
@@ -177,6 +229,43 @@ const ProfilePage = () => {
                             <Clock className="w-5 h-5" />
                             История
                         </button>
+
+                        {user?.email === 'andrewche2003@gmail.com' && (
+                            <button
+                                onClick={() => navigate('/admin')}
+                                className="w-full text-left px-6 py-4 rounded-2xl font-bold bg-[#fab1a0]/20 text-[#e17055] hover:bg-[#fab1a0]/30 transition-all flex items-center gap-3 mt-4"
+                            >
+                                <Shield className="w-5 h-5" />
+                                Админ-панель
+                            </button>
+                        )}
+
+                        <div className="mt-8 p-6 bg-gradient-to-br from-[#6c5ce7] to-[#a29bfe] rounded-[2rem] text-white shadow-lg overflow-hidden relative group">
+                            <Sparkles className="absolute -top-2 -right-2 w-16 h-16 opacity-20 group-hover:rotate-12 transition-transform" />
+                            <h4 className="font-black uppercase text-[10px] tracking-widest mb-4 opacity-80">Ваш Герой</h4>
+
+                            {islands[0]?.appearance_data ? (
+                                <div className="space-y-3 relative z-10">
+                                    <div className="flex items-center justify-between text-sm">
+                                        <span className="opacity-70">Волосы:</span>
+                                        <span className="font-black">{islands[0].appearance_data.hair || 'Обычные'}</span>
+                                    </div>
+                                    <div className="flex items-center justify-between text-sm">
+                                        <span className="opacity-70">Глаза:</span>
+                                        <span className="font-black">{islands[0].appearance_data.eyes || 'Ясные'}</span>
+                                    </div>
+                                    <div className="flex items-center justify-between text-sm">
+                                        <span className="opacity-70">Наряд:</span>
+                                        <span className="font-black">{islands[0].appearance_data.outfit || 'Странник'}</span>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="text-center py-4">
+                                    <Wand2 className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                                    <p className="text-[10px] font-bold opacity-70">Нет данных о внешности</p>
+                                </div>
+                            )}
+                        </div>
                     </div>
 
                     {/* Content Area */}

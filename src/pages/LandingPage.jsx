@@ -12,7 +12,6 @@ const LandingPage = () => {
     const navigate = useNavigate();
     const [offset, setOffset] = React.useState({ x: 0, y: 0 });
     const [scrolled, setScrolled] = React.useState(false);
-    const [isAdmin, setIsAdmin] = React.useState(false);
 
     const handleMouseMove = (e) => {
         const x = (e.clientX / window.innerWidth - 0.5) * 20; // -10 to 10
@@ -24,7 +23,6 @@ const LandingPage = () => {
 
 
     React.useEffect(() => {
-        checkUser();
 
         const handleScroll = () => {
             setScrolled(window.scrollY > 300);
@@ -47,35 +45,12 @@ const LandingPage = () => {
         };
     }, []);
 
-    const checkUser = async () => {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (user && user.email === import.meta.env.VITE_ADMIN_EMAIL) {
-            setIsAdmin(true);
-        }
-    };
-
     return (
         <div className="min-h-screen" onMouseMove={handleMouseMove}>
             <CookieConsent />
 
-            {/* DYNAMIC ISLAND NAV */}
-            <div className="dynamic-island-container">
-                <nav className="dynamic-island">
-                    <div className="flex items-center gap-3 cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-                        <img src={logoPixel} alt="PD" className="h-8 w-auto image-pixelated hover:rotate-12 transition-transform" />
-                    </div>
-
-                    <div className="flex items-center gap-6">
-                        <button className="nav-link" onClick={() => navigate('/blog')}>Блог</button>
-                        <button className="nav-link" onClick={() => navigate('/auth')}>Кабинет</button>
-                        {isAdmin && <button className="nav-link text-[#fab1a0]" onClick={() => navigate('/admin')}>Админка</button>}
-                        <ThemeToggle />
-                    </div>
-                </nav>
-            </div>
-
             {/* 1. HERO SECTION */}
-            <header className="lush-hero flex flex-col items-center justify-center pt-24 px-6 text-center text-white relative">
+            <header className="lush-hero flex flex-col items-center justify-center pt-24 pb-32 px-6 text-center text-white relative">
                 {/* Floating Effects - Magic Fireflies (Increased Count & Visibility & Colors) */}
                 <div className="magic-firefly" style={{ top: '20%', left: '15%', animationDelay: '0s', animationDuration: '4s' }}></div>
                 <div className="magic-firefly" style={{ top: '30%', right: '20%', animationDelay: '1.5s', animationDuration: '5s' }}></div>
@@ -105,7 +80,7 @@ const LandingPage = () => {
                     </div>
 
                     <div className="flex flex-col md:flex-row gap-6 justify-center">
-                        <button className="btn-playful shadow-[0_0_20px_rgba(85,239,196,0.6)]" onClick={() => navigate('/auth')}>
+                        <button className="btn-playful shadow-[0_0_20px_rgba(85,239,196,0.6)]" onClick={() => window.location.href = 'https://pocket-dale.vercel.app'}>
                             Начать игру
                         </button>
                         <button className="btn-ghost backdrop-blur-xl border-white/50 text-white hover:bg-white/20">
@@ -227,39 +202,11 @@ const LandingPage = () => {
                 <div className="max-w-6xl mx-auto relative z-10">
                     {[
                         {
-                            title: "Альфа-тест",
+                            title: "Подготовка к альфа тестированию",
                             date: "Q1 2025",
-                            status: "done",
-                            statusText: "Завершено",
-                            desc: "Запуск основного игрового движка, базовые механики строительства и садоводства. Первые игроки на архипелаге."
-                        },
-                        {
-                            title: "Социальное обновление",
-                            date: "Q2 2025",
                             status: "progress",
-                            statusText: "В разработке",
-                            desc: "Система друзей, совместное строительство, обмен ресурсами и внутриигровой чат."
-                        },
-                        {
-                            title: "Новые биомы и квесты",
-                            date: "Q3 2025",
-                            status: "planned",
-                            statusText: "Запланировано",
-                            desc: "Расширение архипелага: пустынные острова, заснеженные вершины и цепочки уникальных заданий."
-                        },
-                        {
-                            title: "Мобильная версия",
-                            date: "Q4 2025",
-                            status: "planned",
-                            statusText: "Запланировано",
-                            desc: "Выход Pocket Dale на iOS и Android. Кроссплатформенный прогресс между всеми устройствами."
-                        },
-                        {
-                            title: "Глобальный релиз",
-                            date: "2026",
-                            status: "planned",
-                            statusText: "Запланировано",
-                            desc: "Полномасштабный запуск игры, открытие глобальных серверов и первый сезонный ивент."
+                            statusText: "В процессе",
+                            desc: "Запуск основного игрового движка, базовые механики строительства и садоводства. Первые игроки на архипелаге."
                         }
                     ].map((step, idx) => (
                         <div key={idx} className="roadmap-item animate-on-scroll">

@@ -2,53 +2,39 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import { PixelButton, PixelContainer, PixelHeading } from '../components/ui/PixelUI';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 
 const PollsPage = () => {
     const [polls, setPolls] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [user, setUser] = useState(null);
+    const { user } = useAuth();
     const navigate = useNavigate();
 
     useEffect(() => {
-        const fetchUser = async () => {
-            const { data: { user } } = await supabase.auth.getUser();
-            setUser(user);
-        };
-        fetchUser();
         fetchPolls();
     }, []);
 
     const fetchPolls = async () => {
-        setLoading(true);
-        // In a real app, you'd fetch from Supabase. 
-        // Here we use mock data for demonstration if the table doesn't exist yet.
         try {
-            const { data, error } = await supabase.from('polls').select('*');
+            const { data, error } = await supabase
+                .from('polls')
+                .select('*')
+                .eq('is_active', true)
+                .order('created_at', { ascending: false });
             if (error) throw error;
             setPolls(data || []);
         } catch (e) {
             console.warn("Table 'polls' not found or error fetching. Using mock data.");
             setPolls([
-                { id: 1, question: "Which class should we add next?", options: ["Wizard", "Rogue", "Paladin"] },
-                { id: 2, question: "Best pixel art style?", options: ["8-bit", "16-bit", "Gameboy"] }
+                { id: '1', title: "Какую механику добавить первой?", description: "Голосуйте за будущее игры!" }
             ]);
         } finally {
             setLoading(false);
         }
     };
 
-    const handleVote = async (pollId, optionIndex) => {
-        if (!user) {
-            alert("Please login to vote!");
-            navigate('/auth');
-            return;
-        }
-
-        // Logic for voting restricted by UID would go here:
-        // 1. Check if user already voted in 'votes' table
-        // 2. If not, insert vote and update 'polls' counts
-        console.log(`Voting for poll ${pollId}, option ${optionIndex}`);
-        alert("Vote recorded! (Mock)");
+    const handleOpenPoll = (id) => {
+        navigate(`/polls/${id}`);
     };
 
     return (
@@ -64,19 +50,11 @@ const PollsPage = () => {
                 ) : (
                     <div className="grid gap-8">
                         {polls.map(poll => (
-                            <PixelContainer key={poll.id} dark title={`POLL #${poll.id}`} className="hover:border-primary transition-colors">
-                                <p className="mb-6 font-bold">{poll.question}</p>
-                                <div className="flex flex-col gap-4">
-                                    {poll.options.map((option, idx) => (
-                                        <PixelButton
-                                            key={idx}
-                                            className="w-full text-left"
-                                            onClick={() => handleVote(poll.id, idx)}
-                                        >
-                                            {option}
-                                        </PixelButton>
-                                    ))}
-                                </div>
+                            <PixelContainer key={poll.id} dark title={poll.title} className="hover:border-primary transition-colors cursor-pointer" onClick={() => handleOpenPoll(poll.id)}>
+                                <p className="mb-6 text-gray-400">{poll.description}</p>
+                                <PixelButton color="primary" className="w-full">
+                                    УЧАСТВОВАТЬ
+                                </PixelButton>
                             </PixelContainer>
                         ))}
                     </div>

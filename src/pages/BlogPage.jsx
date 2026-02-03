@@ -1,9 +1,11 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabaseClient';
+import { useAuth } from '../contexts/AuthContext';
+import { Heart, MessageCircle, Share2, Eye } from 'lucide-react';
 
 const BlogPage = () => {
     const navigate = useNavigate();
+    const { user } = useAuth();
 
     const [posts, setPosts] = React.useState([]);
     const [loading, setLoading] = React.useState(true);
@@ -26,14 +28,7 @@ const BlogPage = () => {
 
     return (
         <div className="min-h-screen bg-[#fafafa]">
-            {/* Nav */}
-            <nav className="glass-dark py-4 px-6 flex justify-between items-center sticky top-0 z-50">
-                <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate('/')}>
-                    <div className="w-8 h-8 bg-warning border-2 border-black flex items-center justify-center text-black text-[10px] font-bold">PD</div>
-                    <span className="text-xl font-bold tracking-tighter text-warning">POCKET DALE</span>
-                </div>
-                <button className="btn-playful scale-75" onClick={() => navigate('/')}>Назад</button>
-            </nav>
+            {/* The global Navbar is already present in App.jsx layout */}
 
             <main className="max-w-4xl mx-auto py-20 px-6">
                 <h1 className="text-4xl md:text-6xl font-black mb-4 uppercase tracking-tighter">Блог Архипелага</h1>
@@ -67,9 +62,23 @@ const BlogPage = () => {
                                         {/* Simple markdown strip for preview, or just show content */}
                                         {post.content.substring(0, 150)}...
                                     </div>
-                                    <div className="flex justify-between items-center opacity-40 font-bold uppercase text-[10px]">
-                                        <span>{new Date(post.created_at).toLocaleDateString()}</span>
-                                        {!post.hide_author && <span>Автор: {post.author_name || 'Admin'}</span>}
+                                    <div className="flex justify-between items-center mt-6">
+                                        <div className="flex items-center gap-4">
+                                            <button
+                                                className={`flex items-center gap-1 text-xs font-bold transition-colors ${user ? 'text-gray-400 hover:text-error' : 'text-gray-200 cursor-not-allowed'}`}
+                                                onClick={(e) => { e.stopPropagation(); if (user) alert('Лайк поставлен!'); }}
+                                                title={user ? 'Поставить лайк' : 'Войдите, чтобы ставить лайки'}
+                                            >
+                                                <Heart className={`w-4 h-4 ${user ? '' : 'opacity-20'}`} /> {post.likes_count || 0}
+                                            </button>
+                                            <button className="flex items-center gap-1 text-xs font-bold text-gray-400">
+                                                <MessageCircle className="w-4 h-4" /> {post.comments_count || 0}
+                                            </button>
+                                        </div>
+                                        <div className="flex items-center gap-4 opacity-40 font-bold uppercase text-[10px]">
+                                            <span>{new Date(post.created_at).toLocaleDateString()}</span>
+                                            {!post.hide_author && <span>Автор: {post.author_name || 'Admin'}</span>}
+                                        </div>
                                     </div>
                                 </div>
                             </article>

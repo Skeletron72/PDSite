@@ -68,6 +68,21 @@ body {
   justify-content: center;
 }
 
+.lush-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: black;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  z-index: 1;
+  pointer-events: none;
+}
+
+html.dark .lush-hero::before {
+  opacity: 0.4;
+}
+
 /* Parallax Containers */
 .parallax-container {
   position: absolute;
