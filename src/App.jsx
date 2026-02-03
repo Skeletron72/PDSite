@@ -9,7 +9,7 @@ import ProfilePage from './pages/ProfilePage';
 
 function App() {
   return (
-    <Router>
+    <Router basename="/PDSite">
       <div className="min-h-screen">
         <Routes>
           <Route path="/" element={<LandingPage />} />
