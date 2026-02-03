@@ -149,7 +149,7 @@ const ProfilePage = () => {
                 <div className="flex flex-col md:flex-row items-center justify-between mb-12 gap-6 p-8 bg-[var(--bg-card)] rounded-[2.5rem] shadow-sm border-2 border-[var(--border-color)]">
                     <div className="flex items-center gap-6">
                         <div className="w-24 h-24 bg-[#a29bfe] rounded-full flex items-center justify-center border-4 border-white shadow-md">
-                            <span className="text-4xl font-black text-white">{profile?.nickname?.[0].toUpperCase() || user?.email?.[0].toUpperCase()}</span>
+                            <span className="text-4xl font-black text-white">{profile?.nickname?.[0].toUpperCase() || user?.email?.[0].toUpperCase() || '?'}</span>
                         </div>
                         <div>
                             {isEditingNickname ? (

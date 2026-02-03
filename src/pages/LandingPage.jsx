@@ -80,7 +80,10 @@ const LandingPage = () => {
                     </div>
 
                     <div className="flex flex-col md:flex-row gap-6 justify-center">
-                        <button className="btn-playful shadow-[0_0_20px_rgba(85,239,196,0.6)]" onClick={() => window.location.href = 'https://pocket-dale.vercel.app'}>
+                        <button
+                            className="btn-playful shadow-[0_0_20px_rgba(85,239,196,0.6)]"
+                            onClick={() => window.open('https://pocket-dale.vercel.app', '_blank')}
+                        >
                             Начать игру
                         </button>
                         <button className="btn-ghost backdrop-blur-xl border-white/50 text-white hover:bg-white/20">

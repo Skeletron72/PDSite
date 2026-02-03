@@ -3,7 +3,7 @@ import { supabase } from '../lib/supabaseClient';
 import { PixelButton, PixelContainer } from './ui/PixelUI';
 import { Plus, Trash2, Layout, Type, Hash, CheckSquare, Save, Share2 } from 'lucide-react';
 
-const PollEditor = () => {
+const PollEditor = ({ onSave }) => {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [fields, setFields] = useState([
@@ -65,6 +65,7 @@ const PollEditor = () => {
             if (error) throw error;
             setSavedPollId(data.id);
             setMessage('Опрос успешно опубликован!');
+            if (onSave) onSave();
         } catch (err) {
             setMessage('Ошибка: ' + err.message);
         } finally {
@@ -72,120 +73,131 @@ const PollEditor = () => {
         }
     };
 
-    const shareLink = `${window.location.origin}/PDSite/polls/${savedPollId}`;
+    const shareLink = `${window.location.origin}/PDSite/#/polls/${savedPollId}`;
 
     return (
-        <PixelContainer dark title="КОНСТРУКТОР ОПРОСОВ" className="animate-slide-in">
-            <div className="space-y-6">
+        <div className="cozy-card border-2 animate-slide-in h-fit">
+            <h3 className="text-xl font-black uppercase tracking-tighter italic mb-8">Конструктор Опросов</h3>
+
+            <div className="space-y-8">
+                {/* Poll Metadata */}
                 <div className="space-y-4">
+                    <label className="text-[10px] font-black uppercase text-gray-500 tracking-widest pl-2">Общая информация</label>
                     <input
                         type="text"
                         value={title}
                         onChange={(e) => setTitle(e.target.value)}
-                        className="w-full bg-[#1a1c1e] border-2 border-[#4b6584] rounded-lg p-3 text-white text-xl font-bold outline-none focus:border-primary"
-                        placeholder="Заголовок опроса..."
+                        className="w-full bg-[var(--bg-body)] border-2 border-[var(--border-color)] rounded-2xl p-4 text-[var(--text-main)] font-black text-xl outline-none focus:border-primary transition-colors"
+                        placeholder="Название опроса..."
                     />
                     <textarea
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
-                        className="w-full bg-[#1a1c1e] border-2 border-[#4b6584] rounded-lg p-3 text-white outline-none focus:border-primary h-20"
-                        placeholder="Описание для игроков..."
+                        className="w-full bg-[var(--bg-body)] border-2 border-[var(--border-color)] rounded-2xl p-4 text-[var(--text-main)] font-bold outline-none focus:border-primary transition-colors h-24 resize-none text-sm"
+                        placeholder="Краткое описание для игроков..."
                     />
                 </div>
 
-                <div className="space-y-6 mt-8">
+                {/* Fields List */}
+                <div className="space-y-6">
+                    <label className="text-[10px] font-black uppercase text-gray-500 tracking-widest pl-2">Вопросы анкеты</label>
                     {fields.map((field, idx) => (
-                        <div key={field.id} className="p-4 border-2 border-[#4b6584] rounded-xl bg-black/30 relative group animate-slide-in">
+                        <div key={field.id} className="p-6 rounded-[2rem] border-2 border-[var(--border-color)] bg-[var(--bg-body)] relative group animate-slide-in">
                             <button
                                 onClick={() => removeField(field.id)}
-                                className="absolute -top-3 -right-3 bg-error text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                                className="absolute -top-3 -right-3 bg-error text-white w-8 h-8 rounded-full flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 transition-opacity z-10"
                             >
                                 <Trash2 className="w-4 h-4" />
                             </button>
 
-                            <div className="flex items-center gap-2 mb-4">
-                                {field.type === 'choice' && <CheckSquare className="w-4 h-4 text-primary" />}
-                                {field.type === 'scale' && <Hash className="w-4 h-4 text-warning" />}
-                                {field.type === 'text' && <Type className="w-4 h-4 text-success" />}
-                                <span className="text-[10px] font-black uppercase text-gray-500">Поле #{idx + 1} • {field.type}</span>
+                            <div className="flex items-center gap-2 mb-6">
+                                <div className={`p-2 rounded-lg ${field.type === 'choice' ? 'bg-primary/20 text-primary' : field.type === 'scale' ? 'bg-warning/20 text-warning' : 'bg-success/20 text-success'}`}>
+                                    {field.type === 'choice' && <CheckSquare className="w-4 h-4" />}
+                                    {field.type === 'scale' && <Hash className="w-4 h-4" />}
+                                    {field.type === 'text' && <Type className="w-4 h-4" />}
+                                </div>
+                                <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Вопрос #{idx + 1}</span>
                             </div>
 
                             <input
                                 type="text"
                                 value={field.question}
                                 onChange={(e) => updateField(field.id, 'question', e.target.value)}
-                                className="w-full bg-transparent border-b-2 border-[#4b6584] p-2 text-white font-bold outline-none focus:border-primary mb-4"
-                                placeholder="Введите вопрос..."
+                                className="w-full bg-transparent border-b-2 border-[var(--border-color)] p-2 text-[var(--text-main)] font-black outline-none focus:border-primary mb-6"
+                                placeholder="Введите ваш вопрос..."
                             />
 
                             {field.type === 'choice' && (
-                                <div className="space-y-2 pl-4">
+                                <div className="space-y-3 pl-4">
                                     {field.options.map((opt, oIdx) => (
                                         <div key={oIdx} className="flex gap-2">
                                             <input
                                                 type="text"
                                                 value={opt}
                                                 onChange={(e) => updateOption(field.id, oIdx, e.target.value)}
-                                                className="flex-1 bg-[#1a1c1e] border border-[#4b6584] rounded p-2 text-sm text-white outline-none"
+                                                className="flex-1 bg-white/5 border border-[var(--border-color)] rounded-xl py-2 px-4 text-sm text-[var(--text-main)] outline-none focus:border-primary"
                                                 placeholder={`Вариант ${oIdx + 1}`}
                                             />
                                         </div>
                                     ))}
-                                    <button onClick={() => addOption(field.id)} className="text-xs text-primary font-bold hover:underline">
+                                    <button
+                                        onClick={() => addOption(field.id)}
+                                        className="text-[10px] text-primary font-black uppercase hover:tracking-widest transition-all mt-2 pl-2"
+                                    >
                                         + Добавить вариант
                                     </button>
                                 </div>
                             )}
 
-                            {field.type === 'scale' && (
-                                <div className="text-xs text-gray-400 pl-4 py-2 border-l-2 border-warning">
-                                    Игроки увидят шкалу выбора от 1 до 10.
-                                </div>
-                            )}
-
-                            {field.type === 'text' && (
-                                <div className="text-xs text-gray-400 pl-4 py-2 border-l-2 border-success">
-                                    Текстовое поле для свободного ответа.
-                                </div>
-                            )}
+                            {field.type === 'scale' && <p className="text-[10px] text-gray-500 italic pl-4">Шкала выбора от 1 до 10</p>}
                         </div>
                     ))}
                 </div>
 
-                <div className="grid grid-cols-3 gap-2 mt-8">
-                    <button onClick={() => addField('choice')} className="p-3 bg-white/5 rounded-xl border-2 border-[#4b6584] hover:bg-primary/10 transition-colors flex flex-col items-center gap-2">
-                        <CheckSquare className="w-5 h-5 text-primary" />
+                {/* Field Type Selectors */}
+                <div className="grid grid-cols-3 gap-3">
+                    <button onClick={() => addField('choice')} className="flex flex-col items-center justify-center p-4 rounded-2xl border-2 border-[var(--border-color)] hover:border-primary hover:bg-primary/5 transition-all gap-2 group">
+                        <CheckSquare className="w-5 h-5 text-primary group-hover:scale-110 transition-transform" />
                         <span className="text-[8px] font-black uppercase">Выбор</span>
                     </button>
-                    <button onClick={() => addField('scale')} className="p-3 bg-white/5 rounded-xl border-2 border-[#4b6584] hover:bg-warning/10 transition-colors flex flex-col items-center gap-2">
-                        <Hash className="w-5 h-5 text-warning" />
+                    <button onClick={() => addField('scale')} className="flex flex-col items-center justify-center p-4 rounded-2xl border-2 border-[var(--border-color)] hover:border-warning hover:bg-warning/5 transition-all gap-2 group">
+                        <Hash className="w-5 h-5 text-warning group-hover:scale-110 transition-transform" />
                         <span className="text-[8px] font-black uppercase">Шкала</span>
                     </button>
-                    <button onClick={() => addField('text')} className="p-3 bg-white/5 rounded-xl border-2 border-[#4b6584] hover:bg-success/10 transition-colors flex flex-col items-center gap-2">
-                        <Type className="w-5 h-5 text-success" />
+                    <button onClick={() => addField('text')} className="flex flex-col items-center justify-center p-4 rounded-2xl border-2 border-[var(--border-color)] hover:border-success hover:bg-success/5 transition-all gap-2 group">
+                        <Type className="w-5 h-5 text-success group-hover:scale-110 transition-transform" />
                         <span className="text-[8px] font-black uppercase">Текст</span>
                     </button>
                 </div>
 
-                <PixelButton color="success" onClick={handleSave} disabled={loading} className="w-full mt-6">
-                    <Save className="w-4 h-4 mr-2 inline" /> {loading ? 'СОХРАНЕНИЕ...' : 'ОПУБЛИКОВАТЬ ОПРОС'}
-                </PixelButton>
+                <div className="pt-6">
+                    <button
+                        onClick={handleSave}
+                        disabled={loading}
+                        className="btn-playful w-full py-6 text-xl shadow-xl bg-success text-white border-white/10"
+                    >
+                        {loading ? 'СОХРАНЕНИЕ...' : 'ОПУБЛИКОВАТЬ ОПРОС'}
+                    </button>
+                </div>
 
                 {message && (
-                    <div className={`p-4 rounded-lg text-center font-bold text-sm ${message.startsWith('Ошибка') ? 'bg-error/20 text-error' : 'bg-success/20 text-success'}`}>
-                        {message}
+                    <div className={`p-6 rounded-[1.5rem] border-2 animate-slide-in ${message.startsWith('Ошибка') ? 'bg-error/10 border-error text-error' : 'bg-success/10 border-success text-success'}`}>
+                        <p className="font-black uppercase text-xs text-center">{message}</p>
                         {savedPollId && (
-                            <div className="mt-4 p-3 bg-black/40 rounded-xl border border-white/10 flex items-center justify-between">
-                                <span className="text-[10px] text-gray-400 truncate mr-4">{shareLink}</span>
-                                <button onClick={() => { navigator.clipboard.writeText(shareLink); alert('Ссылка скопирована!'); }}>
-                                    <Share2 className="w-4 h-4 text-primary" />
+                            <div className="mt-6 p-4 bg-white/5 rounded-2xl border border-white/10 flex items-center justify-between gap-4">
+                                <span className="text-[10px] font-bold text-gray-500 truncate">{shareLink}</span>
+                                <button
+                                    className="p-2 bg-primary/20 rounded-lg text-primary hover:bg-primary hover:text-black transition-colors"
+                                    onClick={() => { navigator.clipboard.writeText(shareLink); alert('Ссылка скопирована!'); }}
+                                >
+                                    <Share2 className="w-4 h-4" />
                                 </button>
                             </div>
                         )}
                     </div>
                 )}
             </div>
-        </PixelContainer>
+        </div>
     );
 };
 

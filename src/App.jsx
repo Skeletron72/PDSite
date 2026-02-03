@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 import LandingPage from './pages/LandingPage';
 import AuthPage from './pages/AuthPage';
 import PollsPage from './pages/PollsPage';
@@ -12,7 +12,7 @@ import Navbar from './components/Navbar';
 
 function App() {
   return (
-    <Router basename="/PDSite">
+    <Router>
       <AuthProvider>
         <div className="min-h-screen">
           <Navbar />

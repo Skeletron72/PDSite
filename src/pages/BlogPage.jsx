@@ -8,10 +8,10 @@ const BlogPage = () => {
     const navigate = useNavigate();
     const { user } = useAuth();
 
-    const [posts, setPosts] = React.useState([]);
-    const [loading, setLoading] = React.useState(true);
+    const [posts, setPosts] = useState([]);
+    const [loading, setLoading] = useState(true);
 
-    React.useEffect(() => {
+    useEffect(() => {
         fetchPosts();
     }, []);
 
@@ -44,7 +44,11 @@ const BlogPage = () => {
                         </div>
                     ) : (
                         posts.map(post => (
-                            <article key={post.id} className="cozy-card group cursor-pointer overflow-hidden flex flex-col md:flex-row gap-8 items-center">
+                            <article
+                                key={post.id}
+                                className="cozy-card group cursor-pointer overflow-hidden flex flex-col md:flex-row gap-8 items-center"
+                                onClick={() => navigate(`/blog/${post.id}`)}
+                            >
                                 {post.image_url ? (
                                     <img src={post.image_url} alt={post.title} className="w-full md:w-48 h-48 object-cover rounded-[1.5rem] shrink-0 border-4 border-white shadow-inner" style={{ imageRendering: 'pixelated' }} />
                                 ) : (
@@ -61,7 +65,7 @@ const BlogPage = () => {
                                     </h2>
                                     <div className="text-gray-500 leading-relaxed mb-6 text-sm line-clamp-3">
                                         {/* Simple markdown strip for preview, or just show content */}
-                                        {post.content.substring(0, 150)}...
+                                        {post.content ? `${post.content.substring(0, 150)}...` : 'Нет описания...'}
                                     </div>
                                     <div className="flex justify-between items-center mt-6">
                                         <div className="flex items-center gap-4">

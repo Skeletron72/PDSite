@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import { PixelButton, PixelContainer } from './ui/PixelUI';
 
-const BlogEditor = ({ onPostCreated }) => {
+const BlogEditor = ({ onSave }) => {
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
     const [image, setImage] = useState('');
@@ -36,108 +36,115 @@ const BlogEditor = ({ onPostCreated }) => {
             setTitle('');
             setContent('');
             setImage('');
-            if (onPostCreated) onPostCreated();
+            if (onSave) onSave();
         }
     };
 
     return (
-        <PixelContainer title="NEW TRANSMISSION" className="mb-8">
-            <div className="flex flex-col gap-4">
-                {/* Title */}
-                <div className="nes-field">
-                    <label htmlFor="title_field">Title</label>
-                    <input
-                        type="text"
-                        id="title_field"
-                        className="nes-input is-dark"
-                        value={title}
-                        onChange={(e) => setTitle(e.target.value)}
-                        placeholder="Epic Update v1.0"
-                    />
-                </div>
-
-                {/* Tag & Author Selection */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="nes-field">
-                        <label htmlFor="tag_select">Категория</label>
-                        <div className="nes-select is-dark">
-                            <select required id="tag_select" value={tag} onChange={(e) => setTag(e.target.value)}>
-                                <option value="News">News</option>
-                                <option value="Update">Update</option>
-                                <option value="Guide">Guide</option>
-                                <option value="Event">Event</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div className="nes-field">
-                        <label htmlFor="author_field">Автор</label>
-                        <div className="flex gap-2 items-center">
-                            <input
-                                type="text"
-                                id="author_field"
-                                className="nes-input is-dark"
-                                value={authorName}
-                                onChange={(e) => setAuthorName(e.target.value)}
-                                disabled={hideAuthor}
-                            />
-                            <label className="flex items-center gap-2 text-xs cursor-pointer">
-                                <input
-                                    type="checkbox"
-                                    className="nes-checkbox is-dark"
-                                    checked={hideAuthor}
-                                    onChange={(e) => setHideAuthor(e.target.checked)}
-                                />
-                                <span>Скрыть</span>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Image URL */}
-                <div className="nes-field">
-                    <label htmlFor="image_field">Image URL (Optional)</label>
-                    <input
-                        type="text"
-                        id="image_field"
-                        className="nes-input is-dark"
-                        value={image}
-                        onChange={(e) => setImage(e.target.value)}
-                        placeholder="https://..."
-                    />
-                </div>
-
-                {/* Content Editor */}
-                <div className="nes-field">
-                    <label htmlFor="content_field">Content (Markdown)</label>
-                    {!previewMode ? (
-                        <textarea
-                            id="content_field"
-                            className="nes-textarea is-dark"
-                            rows="10"
-                            value={content}
-                            onChange={(e) => setContent(e.target.value)}
-                            placeholder="Write your adventure here... Supports **bold**, *italic*, [links](url)"
-                        ></textarea>
-                    ) : (
-                        <div className="nes-container is-dark is-rounded min-h-[200px] text-left">
-                            {/* Simple Markdown Preview (Use a library like react-markdown for full support, applying basic formatting for now) */}
-                            <p className="whitespace-pre-wrap font-sans text-sm leading-relaxed">{content}</p>
-                        </div>
-                    )}
-                </div>
-
-                {/* Controls */}
-                <div className="flex gap-4 justify-end mt-4">
-                    <PixelButton onClick={() => setPreviewMode(!previewMode)}>
+        <div className="cozy-card border-2 animate-slide-in">
+            <div className="flex items-center justify-between mb-8">
+                <h3 className="text-xl font-black uppercase tracking-tighter italic">Новый Пост</h3>
+                <div className="flex gap-2">
+                    <button
+                        onClick={() => setPreviewMode(!previewMode)}
+                        className={`text-[10px] font-black uppercase px-4 py-1 rounded-full border-2 transition-all ${previewMode ? 'bg-primary text-black border-primary' : 'border-[var(--border-color)] text-[var(--text-muted)] hover:text-[var(--text-main)]'}`}
+                    >
                         {previewMode ? 'EDIT' : 'PREVIEW'}
-                    </PixelButton>
-                    <PixelButton color="success" onClick={handlePublish} disabled={loading}>
-                        {loading ? 'SENDING...' : 'PUBLISH'}
-                    </PixelButton>
+                    </button>
                 </div>
             </div>
-        </PixelContainer>
+
+            <div className="space-y-6">
+                {!previewMode ? (
+                    <>
+                        <div className="space-y-4">
+                            <label className="text-[10px] font-black uppercase text-gray-500 tracking-widest pl-2">Заголовок</label>
+                            <input
+                                type="text"
+                                className="w-full bg-[var(--bg-body)] border-2 border-[var(--border-color)] rounded-2xl p-4 text-[var(--text-main)] font-bold outline-none focus:border-primary transition-colors"
+                                value={title}
+                                onChange={(e) => setTitle(e.target.value)}
+                                placeholder="Название вашей новости..."
+                            />
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="space-y-4">
+                                <label className="text-[10px] font-black uppercase text-gray-500 tracking-widest pl-2">Категория</label>
+                                <select
+                                    value={tag}
+                                    onChange={(e) => setTag(e.target.value)}
+                                    className="w-full bg-[var(--bg-body)] border-2 border-[var(--border-color)] rounded-2xl p-4 text-[var(--text-main)] font-bold outline-none focus:border-primary transition-colors appearance-none"
+                                >
+                                    <option value="News">Новости</option>
+                                    <option value="Update">Обновление</option>
+                                    <option value="Guide">Гайд</option>
+                                    <option value="Event">Событие</option>
+                                </select>
+                            </div>
+
+                            <div className="space-y-4">
+                                <label className="text-[10px] font-black uppercase text-gray-500 tracking-widest pl-2">Автор</label>
+                                <div className="relative">
+                                    <input
+                                        type="text"
+                                        className="w-full bg-[var(--bg-body)] border-2 border-[var(--border-color)] rounded-2xl p-4 text-[var(--text-main)] font-bold outline-none focus:border-primary transition-colors pr-12"
+                                        value={authorName}
+                                        onChange={(e) => setAuthorName(e.target.value)}
+                                        disabled={hideAuthor}
+                                    />
+                                    <button
+                                        className="absolute right-4 top-1/2 -translate-y-1/2"
+                                        onClick={() => setHideAuthor(!hideAuthor)}
+                                    >
+                                        <div className={`w-4 h-4 rounded border-2 transition-colors ${hideAuthor ? 'bg-primary border-primary' : 'border-gray-500'}`}></div>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="space-y-4">
+                            <label className="text-[10px] font-black uppercase text-gray-500 tracking-widest pl-2">URL Изображения</label>
+                            <input
+                                type="text"
+                                className="w-full bg-[var(--bg-body)] border-2 border-[var(--border-color)] rounded-2xl p-4 text-[var(--text-main)] font-bold outline-none focus:border-primary transition-colors"
+                                value={image}
+                                onChange={(e) => setImage(e.target.value)}
+                                placeholder="https://..."
+                            />
+                        </div>
+
+                        <div className="space-y-4">
+                            <label className="text-[10px] font-black uppercase text-gray-500 tracking-widest pl-2">Текст (Markdown)</label>
+                            <textarea
+                                className="w-full bg-[var(--bg-body)] border-2 border-[var(--border-color)] rounded-2xl p-4 text-[var(--text-main)] font-bold outline-none focus:border-primary transition-colors min-h-[250px] resize-none"
+                                value={content}
+                                onChange={(e) => setContent(e.target.value)}
+                                placeholder="Ваша история начинается здесь..."
+                            />
+                        </div>
+                    </>
+                ) : (
+                    <div className="bg-[var(--bg-body)] rounded-3xl p-8 border-2 border-dashed border-[var(--border-color)] min-h-[400px]">
+                        <h2 className="text-3xl font-black uppercase mb-4">{title || 'Без названия'}</h2>
+                        <div className="flex gap-2 mb-8">
+                            <span className="bg-primary/20 text-primary px-3 py-1 rounded-full text-[10px] font-black uppercase">{tag}</span>
+                            <span className="bg-white/5 text-gray-500 px-3 py-1 rounded-full text-[10px] font-black uppercase">By {hideAuthor ? 'Anon' : authorName}</span>
+                        </div>
+                        {image && <img src={image} className="w-full h-48 object-cover rounded-xl mb-8 border-2 border-[var(--border-color)]" alt="Preview" />}
+                        <p className="whitespace-pre-wrap font-sans text-lg leading-relaxed text-[var(--text-muted)]">{content || 'Текст отсутствует...'}</p>
+                    </div>
+                )}
+
+                <button
+                    onClick={handlePublish}
+                    disabled={loading}
+                    className="btn-playful w-full py-6 text-xl shadow-xl"
+                >
+                    {loading ? 'ПУБЛИКАЦИЯ...' : 'ОПУБЛИКОВАТЬ'}
+                </button>
+            </div>
+        </div>
     );
 };
 

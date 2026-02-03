@@ -63,27 +63,27 @@ const PollDetailsPage = () => {
     };
 
     if (loading) return (
-        <div className="min-h-screen flex flex-col items-center justify-center bg-[#1a1c1e] text-white">
+        <div className="min-h-screen flex flex-col items-center justify-center bg-[var(--bg-body)] text-[var(--text-main)] transition-colors duration-300">
             <Loader2 className="w-12 h-12 animate-spin text-primary mb-4" />
             <p className="font-black uppercase tracking-widest">Загрузка опроса...</p>
         </div>
     );
 
     if (!poll) return (
-        <div className="min-h-screen flex items-center justify-center bg-[#1a1c1e] p-6">
+        <div className="min-h-screen flex items-center justify-center bg-[var(--bg-body)] p-6 transition-colors duration-300">
             <PixelContainer dark title="404" className="text-center">
-                <p className="mb-6">Опрос не найден.</p>
+                <p className="mb-6 text-[var(--text-main)]">Опрос не найден.</p>
                 <PixelButton onClick={() => navigate('/polls')}>К СПИСКУ ОПРОСОВ</PixelButton>
             </PixelContainer>
         </div>
     );
 
     if (submitted) return (
-        <div className="min-h-screen flex items-center justify-center bg-[#1a1c1e] p-6 animate-slide-in">
+        <div className="min-h-screen flex items-center justify-center bg-[var(--bg-body)] p-6 animate-slide-in transition-colors duration-300">
             <PixelContainer dark title="УСПЕШНО" className="text-center max-w-md">
                 <CheckCircle className="w-20 h-20 text-success mx-auto mb-6" />
-                <h2 className="text-2xl font-black text-white mb-2">СПАСИБО ЗА УЧАСТИЕ!</h2>
-                <p className="text-gray-400 mb-8">Ваш голос поможет сделать Pocket Dale лучше.</p>
+                <h2 className="text-2xl font-black text-[var(--text-main)] mb-2 uppercase">СПАСИБО ЗА УЧАСТИЕ!</h2>
+                <p className="text-[var(--text-muted)] mb-8">Ваш голос поможет сделать Pocket Dale лучше.</p>
                 <div className="flex gap-4">
                     <PixelButton onClick={() => navigate('/polls')} className="flex-1">ОПРОСЫ</PixelButton>
                     <PixelButton color="primary" onClick={() => navigate('/')} className="flex-1">ДОМОЙ</PixelButton>
@@ -93,26 +93,26 @@ const PollDetailsPage = () => {
     );
 
     return (
-        <div className="min-h-screen bg-[#1a1c1e] py-20 px-6">
+        <div className="min-h-screen bg-[var(--bg-body)] py-20 px-6 text-[var(--text-main)] transition-colors duration-300">
             <div className="max-w-3xl mx-auto space-y-12">
                 <button
                     onClick={() => navigate('/polls')}
-                    className="flex items-center gap-2 text-gray-500 hover:text-white transition-colors uppercase font-black text-[10px]"
+                    className="flex items-center gap-2 text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors uppercase font-black text-[10px]"
                 >
                     <ArrowLeft className="w-3 h-3" /> Все опросы
                 </button>
 
                 <div className="text-center space-y-4">
-                    <h1 className="text-4xl md:text-6xl font-black text-white uppercase tracking-tighter leading-none">
+                    <h1 className="text-4xl md:text-6xl font-black text-[var(--text-main)] uppercase tracking-tighter leading-none">
                         {poll.title}
                     </h1>
-                    <p className="text-gray-400 text-lg">{poll.description}</p>
+                    <p className="text-[var(--text-muted)] text-lg">{poll.description}</p>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-10">
-                    {poll.fields.map((field) => (
+                    {poll.fields?.map((field) => (
                         <div key={field.id} className="space-y-4 animate-slide-in">
-                            <label className="text-xl font-black text-white uppercase block leading-tight">
+                            <label className="text-xl font-black text-[var(--text-main)] uppercase block leading-tight">
                                 {field.question}
                             </label>
 
@@ -125,7 +125,7 @@ const PollDetailsPage = () => {
                                             onClick={() => handleUpdateResponse(field.id, option)}
                                             className={`p-4 rounded-xl border-4 text-left font-bold transition-all ${responses[field.id] === option
                                                 ? 'bg-primary/20 border-primary text-primary shadow-[0_0_20px_rgba(85,239,196,0.2)]'
-                                                : 'bg-white/5 border-white/10 text-gray-400 hover:border-white/30'
+                                                : 'bg-[var(--bg-card)] border-[var(--border-color)] text-[var(--text-muted)] hover:border-primary'
                                                 }`}
                                         >
                                             {option}
@@ -143,7 +143,7 @@ const PollDetailsPage = () => {
                                             onClick={() => handleUpdateResponse(field.id, val)}
                                             className={`flex-1 h-12 rounded-lg border-2 font-black transition-all ${responses[field.id] === val
                                                 ? 'bg-warning border-warning text-[#2d3436] scale-110 shadow-lg'
-                                                : 'bg-white/5 border-white/10 text-gray-500 hover:bg-white/10'
+                                                : 'bg-[var(--bg-card)] border-[var(--border-color)] text-[var(--text-muted)] hover:bg-[var(--bg-body)]'
                                                 }`}
                                         >
                                             {val}
@@ -154,7 +154,7 @@ const PollDetailsPage = () => {
 
                             {field.type === 'text' && (
                                 <textarea
-                                    className="w-full bg-white/5 border-4 border-white/10 rounded-2xl p-4 text-white font-bold outline-none focus:border-success transition-colors min-h-[120px]"
+                                    className="w-full bg-[var(--bg-card)] border-4 border-[var(--border-color)] rounded-2xl p-4 text-[var(--text-main)] font-bold outline-none focus:border-success transition-colors min-h-[120px]"
                                     placeholder="Ваш ответ здесь..."
                                     value={responses[field.id] || ''}
                                     onChange={(e) => handleUpdateResponse(field.id, e.target.value)}
