@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import { useNavigate } from 'react-router-dom';
-import { Key, CheckCircle, XCircle, Loader2 } from 'lucide-react';
+import { Key, CheckCircle, XCircle, Loader2, Sparkles } from 'lucide-react';
 
 const AuthPage = () => {
     const [email, setEmail] = useState('');
