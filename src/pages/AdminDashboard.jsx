@@ -6,7 +6,7 @@ import BlogEditor from '../components/BlogEditor';
 import PollEditor from '../components/PollEditor';
 import Papa from 'papaparse';
 import { useNavigate } from 'react-router-dom';
-import { Users, Activity, Download, ListChecks, ArrowLeftRight } from 'lucide-react';
+import { Users, Activity, Download, ListChecks, ArrowLeftRight, Shield, Trash2, FileText } from 'lucide-react';
 
 const AdminDashboard = () => {
     const [isAdmin, setIsAdmin] = useState(false);
@@ -18,6 +18,7 @@ const AdminDashboard = () => {
     });
 
     const [polls, setPolls] = useState([]);
+    const [posts, setPosts] = useState([]);
     const [selectedPoll, setSelectedPoll] = useState(null);
     const [chartData, setChartData] = useState(null);
     const [refreshTrigger, setRefreshTrigger] = useState(0);
@@ -28,6 +29,7 @@ const AdminDashboard = () => {
         checkAdmin();
         fetchGlobalStats();
         fetchPollsList();
+        fetchPostsList();
     }, [refreshTrigger]);
 
     useEffect(() => {
@@ -82,8 +84,49 @@ const AdminDashboard = () => {
             .select('*')
             .order('created_at', { ascending: false });
         setPolls(data || []);
-        if (data && data.length > 0 && !selectedPoll) {
-            setSelectedPoll(data[0]);
+        if (data && data.length > 0) {
+            if (!selectedPoll || !data.find(p => p.id === selectedPoll.id)) {
+                setSelectedPoll(data[0]);
+            }
+        } else {
+            setSelectedPoll(null);
+        }
+    };
+
+    const fetchPostsList = async () => {
+        const { data } = await supabase
+            .from('posts')
+            .select('*')
+            .order('created_at', { ascending: false });
+        setPosts(data || []);
+    };
+
+    const handleDeletePoll = async (id, e) => {
+        e.stopPropagation();
+        if (!window.confirm('Вы действительно хотите удалить этот опрос и все ответы на него?')) return;
+
+        try {
+            // First delete responses (cascade might not be set in SQL, let's be safe)
+            await supabase.from('poll_responses').delete().eq('poll_id', id);
+            const { error } = await supabase.from('polls').delete().eq('id', id);
+            if (error) throw error;
+
+            if (selectedPoll?.id === id) setSelectedPoll(null);
+            setRefreshTrigger(prev => prev + 1);
+        } catch (err) {
+            alert('Ошибка при удалении: ' + err.message);
+        }
+    };
+
+    const handleDeletePost = async (id) => {
+        if (!window.confirm('Удалить этот пост навсегда?')) return;
+
+        try {
+            const { error } = await supabase.from('posts').delete().eq('id', id);
+            if (error) throw error;
+            setRefreshTrigger(prev => prev + 1);
+        } catch (err) {
+            alert('Ошибка при удалении: ' + err.message);
         }
     };
 
@@ -246,11 +289,17 @@ const AdminDashboard = () => {
                                 <button
                                     key={poll.id}
                                     onClick={() => setSelectedPoll(poll)}
-                                    className={`w-full text-left p-6 rounded-[1.5rem] border-2 transition-all ${selectedPoll?.id === poll.id
+                                    className={`w-full text-left p-6 rounded-[1.5rem] border-2 transition-all relative group/poll ${selectedPoll?.id === poll.id
                                         ? 'bg-primary/10 border-primary shadow-lg scale-[1.02]'
                                         : 'bg-[var(--bg-card)] border-[var(--border-color)] opacity-60 hover:opacity-100 hover:border-white/50'}`}
                                 >
-                                    <h3 className="font-black text-xs uppercase truncate mb-2">{poll.title}</h3>
+                                    <button
+                                        onClick={(e) => handleDeletePoll(poll.id, e)}
+                                        className="absolute top-4 right-4 p-2 bg-error/10 text-error rounded-xl opacity-0 group-hover/poll:opacity-100 transition-opacity hover:bg-error hover:text-white"
+                                    >
+                                        <Trash2 className="w-4 h-4" />
+                                    </button>
+                                    <h3 className="font-black text-xs uppercase truncate mb-2 pr-10">{poll.title}</h3>
                                     <div className="flex justify-between items-center">
                                         <span className="text-[8px] font-bold text-gray-500">{new Date(poll.created_at).toLocaleDateString()}</span>
                                         {poll.is_active && <span className="bg-success/20 text-success text-[8px] px-2 py-0.5 rounded-full font-black uppercase">Live</span>}
@@ -295,6 +344,35 @@ const AdminDashboard = () => {
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
                         <BlogEditor onSave={() => setRefreshTrigger(t => t + 1)} />
                         <PollEditor onSave={() => setRefreshTrigger(t => t + 1)} />
+                    </div>
+                </div>
+
+                {/* Publications Management */}
+                <div className="pt-20 space-y-8">
+                    <h2 className="text-2xl font-black uppercase tracking-tight flex items-center gap-2">
+                        <FileText className="w-6 h-6 text-success" /> Управление публикациями
+                    </h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {posts.map(post => (
+                            <div key={post.id} className="cozy-card p-6 border-2 flex flex-col justify-between group">
+                                <div>
+                                    <div className="flex justify-between items-start mb-4">
+                                        <span className="bg-primary/20 text-primary px-2 py-0.5 rounded-full text-[8px] font-black uppercase">{post.tag}</span>
+                                        <button
+                                            onClick={() => handleDeletePost(post.id)}
+                                            className="p-2 bg-error/10 text-error rounded-lg opacity-0 group-hover:opacity-100 transition-opacity hover:bg-error hover:text-white"
+                                        >
+                                            <Trash2 className="w-3 h-3" />
+                                        </button>
+                                    </div>
+                                    <h4 className="font-black text-sm uppercase mb-2 truncate">{post.title}</h4>
+                                    <p className="text-[10px] text-gray-400 line-clamp-2 mb-4">{post.content}</p>
+                                </div>
+                                <div className="text-[8px] font-bold text-gray-500 uppercase">
+                                    {new Date(post.created_at).toLocaleDateString()} • {post.author_name}
+                                </div>
+                            </div>
+                        ))}
                     </div>
                 </div>
             </div>

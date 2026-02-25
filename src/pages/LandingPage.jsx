@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FaTelegramPlane, FaDiscord } from 'react-icons/fa';
-import { Sparkles, Palmtree, Home, Heart, Compass as Ship, Leaf } from 'lucide-react'; // Added Lucide icons
+import { FaTelegramPlane, FaDiscord, FaApple, FaGooglePlay } from 'react-icons/fa';
+import { Sparkles, Palmtree, Home, Heart, Compass as Ship, Leaf, Share, PlusSquare, MoreVertical, Download, Smartphone, Info } from 'lucide-react'; // Added Lucide icons
 import { supabase } from '../lib/supabaseClient';
 import ThemeToggle from '../components/ThemeToggle';
 import CookieConsent from '../components/CookieConsent';
@@ -12,11 +12,31 @@ const LandingPage = () => {
     const navigate = useNavigate();
     const [offset, setOffset] = React.useState({ x: 0, y: 0 });
     const [scrolled, setScrolled] = React.useState(false);
+    const [showPwaModal, setShowPwaModal] = React.useState(false);
 
     const handleMouseMove = (e) => {
         const x = (e.clientX / window.innerWidth - 0.5) * 20; // -10 to 10
         const y = (e.clientY / window.innerHeight - 0.5) * 10; // -5 to 5
         setOffset({ x, y });
+    };
+
+    const isMobile = () => {
+        return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
+    };
+
+    const isStandalone = () => {
+        return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+    };
+
+    const handlePlayClick = () => {
+        const gameUrl = 'https://pocket-dale.vercel.app';
+        const isDismissed = localStorage.getItem('pwa_guide_dismissed');
+
+        if (isMobile() && !isStandalone() && !isDismissed) {
+            setShowPwaModal(true);
+        } else {
+            window.open(gameUrl, '_blank');
+        }
     };
 
 
@@ -48,6 +68,7 @@ const LandingPage = () => {
     return (
         <div className="min-h-screen" onMouseMove={handleMouseMove}>
             <CookieConsent />
+            <PWAGuideModal isOpen={showPwaModal} onClose={() => setShowPwaModal(false)} />
 
             {/* 1. HERO SECTION */}
             <header className="lush-hero flex flex-col items-center justify-center pt-24 pb-32 px-6 text-center text-white relative">
@@ -82,7 +103,7 @@ const LandingPage = () => {
                     <div className="flex flex-col md:flex-row gap-6 justify-center">
                         <button
                             className="btn-playful shadow-[0_0_20px_rgba(85,239,196,0.6)]"
-                            onClick={() => window.open('https://pocket-dale.vercel.app', '_blank')}
+                            onClick={handlePlayClick}
                         >
                             Начать игру
                         </button>
@@ -193,6 +214,90 @@ const LandingPage = () => {
                     </div>
                 </div>
             </section>
+            {/* 4.5 HOW TO PLAY (PWA GUIDE) */}
+            <section className="py-24 px-6 bg-[var(--bg-body)] text-[var(--text-main)] animate-on-scroll transition-colors duration-300" id="how-to-play">
+                <div className="max-w-7xl mx-auto text-center mb-16">
+                    <h2 className="text-3xl md:text-5xl font-black mb-4 uppercase tracking-tighter">Как играть?</h2>
+                    <div className="w-32 h-2 bg-primary mx-auto rounded-full mb-8"></div>
+                    <p className="max-w-2xl mx-auto text-lg font-bold text-[var(--text-muted)]">
+                        Pocket Dale — это <span className="text-primary">PWA (Progressive Web App)</span>.
+                        Вам не нужно ничего скачивать из Store — просто добавьте игру на главный экран!
+                    </p>
+                </div>
+
+                <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12">
+                    {/* iOS / Safari Guide */}
+                    <div className="cozy-card group">
+                        <div className="flex items-center gap-4 mb-8">
+                            <div className="w-16 h-16 bg-[#000]/10 dark:bg-white/10 rounded-2xl flex items-center justify-center">
+                                <FaApple className="w-10 h-10" />
+                            </div>
+                            <div>
+                                <h3 className="text-2xl font-black">iOS Safari</h3>
+                                <p className="text-sm font-bold opacity-60 uppercase tracking-widest">Гайд для iPhone</p>
+                            </div>
+                        </div>
+
+                        <div className="space-y-6">
+                            {[
+                                { icon: <Share className="w-6 h-6 text-blue-500" />, text: 'Нажми кнопку «Поделиться» в нижней панели Safari' },
+                                { icon: <PlusSquare className="w-6 h-6 text-primary" />, text: 'Прокрути вниз и выбери «На экран "Домой"»' },
+                                { icon: <Download className="w-6 h-6 text-[#55efc4]" />, text: 'Нажми «Добавить» в верхнем углу. Готово!' }
+                            ].map((step, i) => (
+                                <div key={i} className="flex items-center gap-6 p-4 rounded-2xl bg-[var(--bg-body)] border border-[var(--border-color)] group-hover:border-primary/30 transition-colors">
+                                    <div className="w-12 h-12 flex-shrink-0 animate-pulse-subtle bg-white dark:bg-black/20 rounded-xl flex items-center justify-center shadow-sm">
+                                        {step.icon}
+                                    </div>
+                                    <p className="font-bold text-sm leading-relaxed">{step.text}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Android / Chrome Guide */}
+                    <div className="cozy-card group">
+                        <div className="flex items-center gap-4 mb-8">
+                            <div className="w-16 h-16 bg-[#3ddc84]/10 rounded-2xl flex items-center justify-center">
+                                <FaGooglePlay className="w-10 h-10 text-[#3ddc84]" />
+                            </div>
+                            <div>
+                                <h3 className="text-2xl font-black">Android Chrome</h3>
+                                <p className="text-sm font-bold opacity-60 uppercase tracking-widest">Гайд для Android</p>
+                            </div>
+                        </div>
+
+                        <div className="space-y-6">
+                            {[
+                                { icon: <MoreVertical className="w-6 h-6 text-gray-500" />, text: 'Нажми на три точки в верхнем правом углу Chrome' },
+                                { icon: <Smartphone className="w-6 h-6 text-primary" />, text: 'Выбери пункт «Установить приложение»' },
+                                { icon: <Download className="w-6 h-6 text-[#55efc4]" />, text: 'Подтверди установку в сплывающем окне' }
+                            ].map((step, i) => (
+                                <div key={i} className="flex items-center gap-6 p-4 rounded-2xl bg-[var(--bg-body)] border border-[var(--border-color)] group-hover:border-primary/30 transition-colors">
+                                    <div className="w-12 h-12 flex-shrink-0 animate-pulse-subtle bg-white dark:bg-black/20 rounded-xl flex items-center justify-center shadow-sm">
+                                        {step.icon}
+                                    </div>
+                                    <p className="font-bold text-sm leading-relaxed">{step.text}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+
+                {/* Additional Info */}
+                <div className="max-w-4xl mx-auto mt-16 p-8 glass-panel border-2 border-primary/20 flex flex-col md:flex-row items-center gap-8 text-center md:text-left">
+                    <div className="w-20 h-20 bg-primary/20 rounded-full flex items-center justify-center flex-shrink-0">
+                        <Info className="w-10 h-10 text-primary" />
+                    </div>
+                    <div>
+                        <h4 className="text-xl font-bold mb-2">Почему PWA?</h4>
+                        <p className="text-sm text-[var(--text-muted)] leading-relaxed">
+                            Это экономит место на телефоне, работает быстрее и всегда обновлено до последней версии.
+                            Pocket Dale будет выглядеть и работать как обычное приложение: без рамок браузера и со своей иконкой.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
             {/* 4. ROADMAP */}
             <section className="py-24 px-6 bg-[var(--bg-body)] text-[var(--text-main)] roadmap-section overflow-hidden transition-colors duration-300">
                 <div className="roadmap-timeline"></div>
@@ -229,9 +334,6 @@ const LandingPage = () => {
                 </div>
             </section>
 
-
-
-            {/* 5. FOOTER */}
             {/* 5. FOOTER */}
             <footer className="py-12 bg-[#2d3436] text-white relative overflow-hidden">
                 {/* Subtle Glass Overlay */}
@@ -264,6 +366,96 @@ const LandingPage = () => {
                     </div>
                 </div>
             </footer>
+        </div>
+    );
+};
+
+const PWAGuideModal = ({ isOpen, onClose }) => {
+    if (!isOpen) return null;
+
+    const handleDismiss = () => {
+        localStorage.setItem('pwa_guide_dismissed', 'true');
+        window.open('https://pocket-dale.vercel.app', '_blank');
+        onClose();
+    };
+
+    return (
+        <div className="pwa-modal-overlay">
+            <div className="pwa-modal-container glass-panel-dark animate-fade-in">
+                <div className="pwa-modal-header">
+                    <h2 className="text-2xl font-black text-white">Установка Pocket Dale</h2>
+                    <button onClick={onClose} className="text-white/60 hover:text-white">
+                        <PlusSquare className="w-6 h-6 rotate-45" />
+                    </button>
+                </div>
+
+                <div className="pwa-modal-content custom-scrollbar">
+                    <p className="text-sm text-gray-300 mb-6">
+                        Для лучшего опыта добавьте игру на главный экран. Она будет работать как полноценное приложение!
+                    </p>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {/* iOS */}
+                        <div className="bg-white/5 p-4 rounded-2xl border border-white/10">
+                            <div className="flex items-center gap-3 mb-4">
+                                <FaApple className="w-6 h-6 text-white" />
+                                <span className="font-bold text-white">iOS Safari</span>
+                            </div>
+                            <div className="space-y-4">
+                                {[
+                                    { icon: <Share className="w-4 h-4 text-blue-400" />, text: 'Кнопка «Поделиться»' },
+                                    { icon: <PlusSquare className="w-4 h-4 text-primary" />, text: '«На экран "Домой"»' },
+                                    { icon: <Download className="w-4 h-4 text-primary" />, text: 'Нажми «Добавить»' }
+                                ].map((step, i) => (
+                                    <div key={i} className="flex items-center gap-3 text-xs">
+                                        <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center shrink-0">
+                                            {step.icon}
+                                        </div>
+                                        <p className="text-gray-300">{step.text}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Android */}
+                        <div className="bg-white/5 p-4 rounded-2xl border border-white/10">
+                            <div className="flex items-center gap-3 mb-4">
+                                <FaGooglePlay className="w-6 h-6 text-[#3ddc84]" />
+                                <span className="font-bold text-white">Android Chrome</span>
+                            </div>
+                            <div className="space-y-4">
+                                {[
+                                    { icon: <MoreVertical className="w-4 h-4 text-gray-400" />, text: 'Три точки в углу' },
+                                    { icon: <Smartphone className="w-4 h-4 text-primary" />, text: '«Установить прил.»' },
+                                    { icon: <Download className="w-4 h-4 text-primary" />, text: 'Подтверди' }
+                                ].map((step, i) => (
+                                    <div key={i} className="flex items-center gap-3 text-xs">
+                                        <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center shrink-0">
+                                            {step.icon}
+                                        </div>
+                                        <p className="text-gray-300">{step.text}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="pwa-modal-footer">
+                    <button
+                        onClick={() => { window.open('https://pocket-dale.vercel.app', '_blank'); onClose(); }}
+                        className="btn-ghost-small"
+                    >
+                        В браузере
+                    </button>
+                    <button
+                        onClick={handleDismiss}
+                        className="btn-playful-small"
+                    >
+                        Понятно, больше не показывать
+                    </button>
+                </div>
+            </div>
         </div>
     );
 };

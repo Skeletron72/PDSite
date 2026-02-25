@@ -134,7 +134,20 @@ const AuthPage = () => {
                 navigate('/profile');
             }
         } catch (error) {
-            setMessage(`Ошибка: ${error.message}`);
+            console.error('Full Auth Error:', error);
+
+            let errorMessage = error.message;
+            if (error.message.includes('Database error saving new user') || error.message.includes('Database error creating new user')) {
+                errorMessage = `Критическая ошибка базы данных при создании пользователя. 
+Код ошибки: ${error.code || 'Неизвестен'}
+Детали: ${error.details || error.message}.
+Пожалуйста, сделайте скриншот этой ошибки и отправьте администратору (Discord/Telegram).`;
+            } else {
+                errorMessage = `Ошибка: ${error.message}`;
+                if (error.details) errorMessage += ` (${error.details})`;
+            }
+
+            setMessage(errorMessage);
         } finally {
             setLoading(false);
         }
@@ -296,7 +309,7 @@ const AuthPage = () => {
                         )}
 
                         {message && (
-                            <div className={`p-4 rounded-xl text-center text-xs font-bold ${message.startsWith('Ошибка') ? 'bg-[#ff7675]/20 text-[#d63031]' : 'bg-[#55efc4]/20 text-[#00b894]'}`}>
+                            <div className={`p-4 rounded-xl text-center text-xs font-bold whitespace-pre-line ${message.includes('Критическая ошибка') || message.startsWith('Ошибка') ? 'bg-[#ff7675]/20 text-[#d63031]' : 'bg-[#55efc4]/20 text-[#00b894]'}`}>
                                 {message}
                             </div>
                         )}

@@ -34,8 +34,8 @@ const Navbar = () => {
                     {user ? (
                         <div className="flex items-center gap-4">
                             {isAdmin && (
-                                <button className="nav-link text-[#fab1a0] flex items-center gap-1" onClick={() => navigate('/admin')}>
-                                    <Shield className="w-4 h-4" /> <span className="hidden md:inline">Панель</span>
+                                <button className="nav-link text-[#fab1a0]" onClick={() => navigate('/admin')}>
+                                    Панель
                                 </button>
                             )}
                             <button
